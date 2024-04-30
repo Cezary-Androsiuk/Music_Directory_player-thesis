@@ -16,7 +16,7 @@ qt_add_qml_module(appMusic_directory_player
     URI Music_directory_player
     VERSION 1.0
 
-    QML_FILES Main.qml
+    QML_FILES qml/Main.qml
     QML_FILES qml/pages/MainPage.qml
     QML_FILES qml/components/DirComboBox.qml
 )
