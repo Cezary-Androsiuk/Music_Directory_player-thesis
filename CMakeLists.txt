@@ -19,6 +19,10 @@ qt_add_qml_module(appMusic_directory_player
     QML_FILES qml/Main.qml
     QML_FILES qml/pages/MainPage.qml
     QML_FILES qml/components/DirComboBox.qml
+    SOURCES cpp/Backend/Backend.h cpp/Backend/Backend.cpp
+    SOURCES cpp/Song/Song.h cpp/Song/Song.cpp
+    SOURCES cpp/DebugPrint.h
+    SOURCES cpp/SongList/SongList.h cpp/SongList/SongList.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
