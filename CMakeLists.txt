@@ -11,7 +11,7 @@ qt_standard_project_setup()
 qt_add_executable(appMusic_directory_player
     main.cpp
 )
-
+# test
 qt_add_qml_module(appMusic_directory_player
     URI Music_directory_player
     VERSION 1.0
