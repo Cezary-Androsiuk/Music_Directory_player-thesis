@@ -9,8 +9,13 @@
 class Song : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString title READ getTitle CONSTANT FINAL)
 public:
     explicit Song(QObject *parent = nullptr);
+
+    QString getTitle() const;
+
+    void setTitle(const QString &title);
 
 signals:
 

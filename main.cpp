@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     Backend* backend = new Backend(&engine);
     engine.rootContext()->setContextProperty("Backend", backend);
 
-    const QUrl url(QStringLiteral("qrc:/Music_directory_player/Main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Music_directory_player/qml/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

@@ -16,13 +16,54 @@ qt_add_qml_module(appMusic_directory_player
     URI Music_directory_player
     VERSION 1.0
 
-    QML_FILES qml/Main.qml
-    QML_FILES qml/pages/MainPage.qml
-    QML_FILES qml/components/DirComboBox.qml
     SOURCES cpp/Backend/Backend.h cpp/Backend/Backend.cpp
-    SOURCES cpp/Song/Song.h cpp/Song/Song.cpp
     SOURCES cpp/DebugPrint.h
+    SOURCES cpp/Song/Song.h cpp/Song/Song.cpp
     SOURCES cpp/SongList/SongList.h cpp/SongList/SongList.cpp
+    SOURCES cpp/Directory/Directory.h cpp/Directory/Directory.cpp
+    SOURCES cpp/Personalization/Personalization.h cpp/Personalization/Personalization.cpp
+
+    QML_FILES qml/Main.qml
+
+    QML_FILES qml/components/LongSeparator.qml
+    QML_FILES qml/components/DirComboBox.qml
+    QML_FILES qml/components/ListButtonField.qml
+    QML_FILES qml/components/LeftTextInList.qml
+    QML_FILES qml/components/ScrollCurrentSongMarker.qml
+    QML_FILES qml/components/FlatButton.qml
+    QML_FILES qml/components/MainPageHeader.qml
+    QML_FILES qml/components/MainPageFooter.qml
+    QML_FILES qml/components/ColorSelectField.qml
+    QML_FILES qml/components/PathSelectField.qml
+    QML_FILES qml/components/SwitchField.qml
+
+    QML_FILES qml/popups/Popup1.qml
+    QML_FILES qml/popups/Popup2.qml
+    QML_FILES qml/popups/Popup3.qml
+
+    QML_FILES qml/pages/MainPage.qml
+    QML_FILES qml/pages/Settings.qml
+    QML_FILES qml/pages/Player.qml
+
+    RESOURCES assets/icons/refresh.png
+    RESOURCES assets/icons/settings.png
+    RESOURCES assets/icons/shuffle.png
+    RESOURCES assets/icons/arrows_long_left.png
+    RESOURCES assets/icons/left_arrow.png
+    RESOURCES assets/icons/folder.png
+    RESOURCES assets/icons/opened_folder.png
+
+    RESOURCES assets/icons/player/end.png
+    RESOURCES assets/icons/player/pause.png
+    RESOURCES assets/icons/player/play.png
+    RESOURCES assets/icons/player/skip_to_start.png
+    RESOURCES assets/icons/player/stop.png
+    RESOURCES assets/icons/player/volume_0.png
+    RESOURCES assets/icons/player/volume_1.png
+    RESOURCES assets/icons/player/volume_2.png
+    RESOURCES assets/icons/player/volume_3.png
+
+    QML_FILES assets/personalizations.json
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
