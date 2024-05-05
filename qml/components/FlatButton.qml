@@ -11,20 +11,17 @@ Item{
     required property string dltImageIdle
     required property string dltImageHover
 
-    // bellow is required for refresh while changing theme
     property color dltIdleColor: root.color_element_idle
     property color dltHoverColor: root.color_element_hover
     property color dltPressColor: root.color_element_press
 
-    // onDltIdleColorChanged: {
-    //     console.log("color idle changed" + this)
-    // }
-    // onDltHoverColorChanged: {
-    //     console.log("color hover changed" + this)
-    // }
-    // onDltPressColorChanged: {
-    //     console.log("color press changed" + this)
-    // }
+    property bool dltDarkThemeRefresh: root.dark_theme
+    onDltDarkThemeRefreshChanged: {
+        // force to refresh because can't find reason why this isn't
+        //    allways refreshing after changing dark_theme state
+        // i think that is caused by some interaction with containsMouse
+        colorOverlay.color = dltIdleColor
+    }
 
     property bool msDown: false
 

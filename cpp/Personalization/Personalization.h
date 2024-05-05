@@ -10,6 +10,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <functional>
+
 #include "cpp/DebugPrint.h"
 
 
@@ -38,11 +40,6 @@ public:
     ~Personalization();
 
 private:
-    void setJsonValue(bool &var,QJsonObject &jo, const QString &key);
-    void setJsonValue(int &var,QJsonObject &jo, const QString &key);
-    void setJsonValue(QString &var,QJsonObject &jo, const QString &key);
-    void setJsonValue(QColor &var,QJsonObject &jo, const QString &key);
-
     void printValues() const;
 
 public:
@@ -68,8 +65,6 @@ signals:
     void lightAccentColorChanged();
     void rootDirectoryChanged();
     void showTooltipsChanged();
-
-    void backendPersonalizationDataChanged();
 
 private:
     bool m_isDarkTheme;

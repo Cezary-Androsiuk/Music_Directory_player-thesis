@@ -53,15 +53,15 @@ qt_add_qml_module(appMusic_directory_player
     RESOURCES assets/icons/folder.png
     RESOURCES assets/icons/opened_folder.png
 
-    RESOURCES assets/icons/player/end.png
-    RESOURCES assets/icons/player/pause.png
-    RESOURCES assets/icons/player/play.png
-    RESOURCES assets/icons/player/skip_to_start.png
-    RESOURCES assets/icons/player/stop.png
-    RESOURCES assets/icons/player/volume_0.png
-    RESOURCES assets/icons/player/volume_1.png
-    RESOURCES assets/icons/player/volume_2.png
-    RESOURCES assets/icons/player/volume_3.png
+    # RESOURCES assets/icons/player/end.png
+    # RESOURCES assets/icons/player/pause.png
+    # RESOURCES assets/icons/player/play.png
+    # RESOURCES assets/icons/player/skip_to_start.png
+    # RESOURCES assets/icons/player/stop.png
+    # RESOURCES assets/icons/player/volume_0.png
+    # RESOURCES assets/icons/player/volume_1.png
+    # RESOURCES assets/icons/player/volume_2.png
+    # RESOURCES assets/icons/player/volume_3.png
 
     QML_FILES assets/personalizations.json
 )

@@ -3,11 +3,9 @@
 Backend::Backend(QObject *parent)
     : QObject{parent},
     m_personalization(nullptr),
-    m_personalizationLoaded(false),
-    m_qmlInitialized(false),
     m_rootDirectory("")
 {
-    this->loadPersonalization();
+
 }
 
 Backend::~Backend()
@@ -15,87 +13,83 @@ Backend::~Backend()
     this->savePersonalization();
 }
 
-void Backend::loadPersonalization()
+void Backend::initializeBackend()
 {
     m_personalization = new Personalization(this);
+
+    DB << m_personalization->getIsDarkTheme();
+    DB << m_personalization->getDarkAccentColor();
+    DB << m_personalization->getLightAccentColor();
+
     if(m_personalization->loadPersonalizationFromJson())
     {
-        WR << "Personalization load failed";
-    }
-    else
-        m_personalizationLoaded = true;
 
-    QObject::connect(
-        m_personalization, &Personalization::backendPersonalizationDataChanged,
-        this, &Backend::personalizationDataChanged);
+        DB << m_personalization->getIsDarkTheme();
+        DB << m_personalization->getDarkAccentColor();
+        DB << m_personalization->getLightAccentColor();
+        WR << "Personalization load failed";
+        emit this->personalizationLoadError();
+        return;
+    }
+
+    emit this->personalizationChanged();
+    this->setRootDirectory(m_personalization->getRootDirectory());
+
+
+    emit this->backendInitialized();
 }
 
 void Backend::savePersonalization()
 {
+    m_personalization->setRootDirectory(m_rootDirectory);
     if(m_personalization->savePersonalizationToJson())
     {
         WR << "Personalization save failed";
     }
 }
 
-void Backend::personalizationDataChanged()
+void Backend::reinitializePersonalization()
 {
-    m_rootDirectory = m_personalization->getRootDirectory();
-}
+    if(m_personalization != nullptr)
+        delete m_personalization;
+    m_personalization = new Personalization(this);
 
-void Backend::qmlInitialized()
-{
-    DB << "qml initialized";
-
-    if(!m_personalizationLoaded)
+    if(m_personalization->loadPersonalizationFromJson())
     {
-        WR << "personalization load error";
-        emit this->personalizationLoadError("");
+        WR << "Personalization load failed";
+        emit this->personalizationLoadError();
+        return;
     }
 
-    // wait 2s
-
-    // QTimer timer;
-    // QEventLoop loop;
-    // QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-    // DB << "start pause";
-    // timer.start(2000);
-    // loop.exec();
-    // WR << "end pause";
-
-    this->loadSongsStructure();
-
-    this->loadSongs();
-
-    DB << "backend loaded!";
-    emit this->backendLoaded();
+    emit this->personalizationChanged();
+    this->setRootDirectory(m_personalization->getRootDirectory());
 }
 
-void Backend::loadSongsStructure()
+void Backend::useDefaultPersonalization()
+{
+    this->m_personalization->setDefaultPersonalizationData();
+    emit this->personalizationChanged();
+    this->setRootDirectory(m_personalization->getRootDirectory());
+}
+
+
+void Backend::loadDirectoryStructure()
 {
     // // can convert local file to url and url to local file
     // QUrl url = QUrl::fromLocalFile(m_rootDirectory);
     // DB << url.toLocalFile();
     // DB << url.toString();
 
-    if(!m_rootDirectory.isEmpty())
-    {
-        QDir dir(m_rootDirectory);
-        if(dir.exists())
-        {
-            DB << "dir" << dir.path() << "exist";
-            createStructureDirectory(m_rootDirectory, -1);
-        }
-        else
-        {
-            WR << "dir" << dir.path() << " not exist!";
-        }
-    }
-    else
-    {
-        WR << "dir" << m_rootDirectory << "is empty!";
-    }
+    // delete old structure
+    for(const auto &i: m_directoryStructure)
+        delete i;
+    m_directoryStructure.clear();
+
+    // get a valid root directory or an empty "" string
+    QString validRootDirectory = this->getValidRootDirectory();
+
+    if(validRootDirectory != "")
+        createStructureDirectory(m_rootDirectory, -1);
 
     emit this->directoryStructureChanged();
 }
@@ -120,12 +114,6 @@ void Backend::loadSongs()
 
     DB << "songs loaded!";
     emit this->songsChanged();
-}
-
-void Backend::tmp()
-{
-    m_rootDirectory = "asdasadasdsaasd";
-    emit this->rootDirectoryChanged();
 }
 
 void Backend::setRootDirectory(QString rootDirectory)
@@ -155,6 +143,26 @@ Backend::QDirectoryList Backend::getDirectoryStructure() const
 Backend::QSongList Backend::getSongs() const
 {
     return m_songs;
+}
+
+QString Backend::getValidRootDirectory() const
+{
+    // at this point root directory won't contains "file:///" prefix
+    // test if given from json or from select root path (GUI) is valid
+    // if not return "" // or default music location
+
+    if(!m_rootDirectory.isEmpty())
+    {
+        if(QDir(m_rootDirectory).exists())
+            return m_rootDirectory;
+        else
+            DB << "dir" << m_rootDirectory << "not exist!";
+    }
+    else
+        WR << "dir" << m_rootDirectory << "is empty!";
+
+    // QString newPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+    return "";
 }
 
 void Backend::createStructureDirectory(QString path, int depth)

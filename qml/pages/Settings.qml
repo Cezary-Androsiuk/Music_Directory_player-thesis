@@ -45,25 +45,6 @@ Page {
             }
         }
 
-        // TabButton{
-        //     anchors{
-        //         left: parent.left
-        //         top: parent.top
-        //         bottom: parent.bottom
-        //     }
-        //     width: height * 2
-
-        //     text: "←"
-        //     font.pixelSize: 30
-
-        //     ToolTip.visible: hovered
-        //     ToolTip.text: "Go Back"
-
-        //     onClicked: {
-        //         closeSettingsView()
-        //     }
-        // }
-
         // Text{
         //     text: "Settings"
         //     anchors.centerIn: parent

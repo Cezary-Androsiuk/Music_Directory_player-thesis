@@ -10,12 +10,24 @@
 // #include <Qfile
 #include <QEventLoop>
 #include <QTimer>
+#include <QStandardPaths>
 
 #include <cpp/DebugPrint.h>
 #include <cpp/Song/Song.h>
 #include <cpp/Directory/Directory.h>
 #include <cpp/Personalization/Personalization.h>
 
+
+/*
+ * exec path:
+ * 1 start main.cpp
+ * 2 create Backend
+ * 3 create QML
+ * 4 QML emits signal to Backend "initializeBackend" (with loading page)
+ * 5 in slot (in Backend) "initializeBackend" prepare all stuff, like personalizations and directoryStructure
+ * 6 Backend will emit error (like personalizationLoadError) if anything failed or emit backendInitialized if all was fine
+ * 7
+ */
 
 class Backend : public QObject
 {
@@ -32,17 +44,16 @@ public:
     explicit Backend(QObject *parent = nullptr);
     ~Backend();
 
-    void loadPersonalization(); // started in constructor
+    Q_INVOKABLE void initializeBackend();
+
     void savePersonalization();
 
 public slots:
-    void personalizationDataChanged();
-    void qmlInitialized(); // emited in Component.onConpleated
-
-    void loadSongsStructure();
+    void reinitializePersonalization();
+    void useDefaultPersonalization();
+    void loadDirectoryStructure();
     // void refreshStructure();
     void loadSongs(); // started in qmlInitialized and emits songs changed
-    void tmp();
 
     void setRootDirectory(QString rootDirectory);
 
@@ -54,12 +65,13 @@ public:
     QSongList getSongs() const;
 
 private:
+    QString getValidRootDirectory() const;
     void createStructureDirectory(QString path, int depth);
 
 signals:
-    void backendLoaded();
-    void personalizationLoadError(QString desc);
-    void backendLoadError(QString desc);
+    void backendInitialized();
+    void personalizationLoadError();
+
 
     void personalizationChanged();
     void songsChanged();
@@ -67,8 +79,6 @@ signals:
     void directoryStructureChanged();
 
 private:
-    bool m_personalizationLoaded;
-    bool m_qmlInitialized;
 
     Personalization *m_personalization;
     QString m_rootDirectory; // stores root path where all songs are located (also in subfolders)

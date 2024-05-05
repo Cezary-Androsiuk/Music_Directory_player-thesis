@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/popups"
+
 ApplicationWindow {
     id: root
     property int _w: 400
@@ -31,20 +33,34 @@ ApplicationWindow {
     */
 
     Component.onCompleted: {
+        dark_theme = true; // as a initialize
         console.log("qml initialized")
-        Backend.qmlInitialized() // inform that qml is loaded and Backend is able to attempt initialization
-        // this allow to display popup when anything failed in loading backend
+        Backend.initializeBackend()
+        // this way allow to display popup when anything failed in loading backend
     }
 
     Connections{
         target: Backend
-        function onBackendLoaded(){
-            console.log("backend loaded")
+        function onBackendInitialized(){
+            console.log("backend initialized")
             mainStackView.replace(Qt.resolvedUrl("pages/MainPage.qml"))//, {parentStackView: mainStackView}) // to pass property
         }
-        function onBackendLoadError(desc){
 
+        function onPersonalizationLoadError(){
+            p_personalizationLoadError.open()
         }
+    }
+
+    Popup3{
+        id: p_personalizationLoadError
+        textMessage: "Error while loading personalizations"
+        textLB: "Reload"
+        textMB: "Use Default"
+        textRB: "Exit"
+
+        onClickedLB: Backend.reinitializePersonalization()
+        onClickedMB: Backend.useDefaultPersonalization()
+        onClickedRB: root.close()
     }
 
     Item{
@@ -52,6 +68,7 @@ ApplicationWindow {
         anchors.fill: parent
         focus: true
         Keys.onEscapePressed: root.close()
+        Keys.onSpacePressed: console.log("-")
 
         StackView{
             id: mainStackView
@@ -129,6 +146,10 @@ ApplicationWindow {
     function rgb(r, g, b, a=255){ return Qt.rgba(r/255, g/255, b/255, a/255); }
 
     property bool dark_theme: Backend.personalization.isDarkTheme
+    onDark_themeChanged: {
+        console.log("changed theme to " + (dark_theme ? "dark" : "light"))
+    }
+
     property color _color_dark_accent1: rgb(255,255,255)
     property color _color_light_accent1: rgb(0,0,0)
     property color _color_dark_accent2: Backend.personalization.darkAccentColor

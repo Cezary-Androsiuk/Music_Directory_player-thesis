@@ -8,42 +8,12 @@ Personalization::Personalization(QObject *parent)
     m_rootDirectory(DEFAULT_ROOT_DIRECTORY),
     m_showTooltips(DEFAULT_SHOW_TOOLTIPS)
 {
-    QObject::connect(this, &Personalization::rootDirectoryChanged, this, &Personalization::backendPersonalizationDataChanged);
+
 }
 
 Personalization::~Personalization()
 {
 
-}
-
-void Personalization::setJsonValue(bool &var, QJsonObject &jo, const QString &key)
-{
-    if(jo.contains(key))
-        var = jo[key].toBool();
-    else
-        WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-}
-void Personalization::setJsonValue(int &var, QJsonObject &jo, const QString &key)
-{
-    if(jo.contains(key))
-        var = jo[key].toInteger();
-    else
-        WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-}
-void Personalization::setJsonValue(QString &var, QJsonObject &jo, const QString &key)
-{
-    if(jo.contains(key))
-        var = jo[key].toString();
-    else
-        WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-}
-
-void Personalization::setJsonValue(QColor &var, QJsonObject &jo, const QString &key)
-{
-    if(jo.contains(key))
-        var = (QRgb)jo[key].toInteger();
-    else
-        WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
 }
 
 void Personalization::printValues() const
@@ -102,11 +72,33 @@ int Personalization::loadPersonalizationFromJson()
 
     auto jp = json_data.object();
 
-    this->setJsonValue(m_isDarkTheme, jp, "is dark theme");
-    this->setJsonValue(m_darkAccentColor, jp, "dark accent color");
-    this->setJsonValue(m_lightAccentColor, jp, "light accent color");
-    this->setJsonValue(m_rootDirectory, jp, "root directory");
-    this->setJsonValue(m_showTooltips, jp, "show tooltips");
+    {
+        QString key = "is dark theme";
+        if(jp.contains(key)) this->setIsDarkTheme(jp[key].toBool());
+        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+    }
+    {
+        QString key = "dark accent color";
+        if(jp.contains(key)) setDarkAccentColor((QRgb)jp[key].toInteger());
+        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+
+    }
+    {
+        QString key = "light accent color";
+        if(jp.contains(key)) setLightAccentColor((QRgb)jp[key].toInteger());
+        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+
+    }
+    {
+        QString key = "root directory";
+        if(jp.contains(key)) setRootDirectory(jp[key].toString());
+        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+    }
+    {
+        QString key = "show tooltips";
+        if(jp.contains(key)) this->setShowTooltips(jp[key].toBool());
+        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+    }
 
     DB << "personalization data readed!";
     this->printValues();
@@ -138,11 +130,11 @@ int Personalization::savePersonalizationToJson()
     }
 
     QJsonObject json_personalizations;
-    json_personalizations["is dark theme"] = m_isDarkTheme;
-    json_personalizations["dark accent color"] = (qint64) m_darkAccentColor.rgba();
-    json_personalizations["light accent color"] = (qint64) m_lightAccentColor.rgba();
-    json_personalizations["root directory"] = m_rootDirectory;
-    json_personalizations["show tooltips"] = m_showTooltips;
+    json_personalizations["is dark theme"] = this->getIsDarkTheme();
+    json_personalizations["dark accent color"] = (qint64) this->getDarkAccentColor().rgba();
+    json_personalizations["light accent color"] = (qint64) this->getLightAccentColor().rgba();
+    json_personalizations["root directory"] = this->getRootDirectory();
+    json_personalizations["show tooltips"] = this->getShowTooltips();
 
     QJsonDocument json_data(json_personalizations);
 

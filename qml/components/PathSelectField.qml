@@ -10,7 +10,6 @@ Item {
 
     property var delegate_text: null
     property string delegate_value: ""
-    property bool delegate_enabled: true
 
     Text{
         anchors{
@@ -47,31 +46,6 @@ Item {
         }
         width: parent.width * 0.4
 
-        TextField{
-            id: folderDialogText
-            anchors{
-                top: parent.top
-                left: parent.left
-                bottom: parent.bottom
-                right: folderDialogButton.left
-            }
-            x: -10
-
-            font.pixelSize: 15
-            clip: true
-
-            enabled: delegate_enabled
-
-            text: delegate_value;
-
-            onEditingFinished: {
-                text = delegate_value;
-            }
-
-            ToolTip.visible: hovered && (width < (contentWidth * 1.3))
-            ToolTip.text: text
-        }
-
         Item{
             id: folderDialogButton
             anchors{
@@ -84,50 +58,13 @@ Item {
             width: height * 0.7
 
             FlatButton{
-                dltDescription: "Select File"
+                dltDescription: "Select File\nCurrent File: " + delegate_value
                 dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
                 dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")
                 onUserClicked: {
                     folderDialog.open()
                 }
             }
-
-        //     Image{
-        //         id: img
-        //         fillMode: Image.PreserveAspectFit
-        //         anchors{
-        //             fill: parent
-        //             topMargin: 15
-        //             margins: parent.width * 0.15
-        //         }
-
-        //         source: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
-        //     }
-
-        //     ColorOverlay {
-        //         anchors.fill: img
-        //         source: img
-        //         color: root.dark_theme ? rgb(96,96,96) : rgb(158,158,158)
-        //         opacity: delegate_enabled ? 1.0 : 0.4
-        //     }
-
-        //     MouseArea{
-        //         anchors.fill: parent
-        //         hoverEnabled: true
-
-        //         enabled: delegate_enabled
-
-        //         onEntered: {
-        //             img.source =  Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")
-        //         }
-        //         onExited: {
-        //             img.source =  Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
-        //         }
-        //         onPressed: folderDialog.open()
-        //     }
-
-        //     // ToolTip.visible: hovered
-        //     // ToolTip.text: "Select File"
         }
 
         FolderDialog {
@@ -135,11 +72,23 @@ Item {
             title: "Select a Path"
             options: FolderDialog.ShowDirsOnly
 
-            currentFolder: delegate_value
+            currentFolder: {
+                if(delegate_value === "")
+                {
+                    if(Qt.platform.os === "windows")
+                        "file:///C:/"
+                    else if(Qt.platform.os === "linux")
+                        "file:///"
+                }
+                else
+                    "file:///" + delegate_value
+            }
+
 
             onAccepted: {
-                folderDialogText.text = folderDialog.selectedFolder;
-                delegate_value = folderDialog.selectedFolder
+                var path = "" + folderDialog.selectedFolder;
+                delegate_value = path.replace("file:///", "")
+
             }
             onRejected: folderDialog.close()
         }
