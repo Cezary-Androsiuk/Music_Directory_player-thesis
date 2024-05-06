@@ -29,6 +29,9 @@
  * 7
  */
 
+#define DEFAULT_ROOT_DIRECTORY ""
+// #define DEFAULT_ROOT_DIRECTORY QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+
 class Backend : public QObject
 {
     typedef QList<Directory *> QDirectoryList;
@@ -51,6 +54,8 @@ public:
 public slots:
     void reinitializePersonalization();
     void useDefaultPersonalization();
+    void initializeDirectoryStructure();
+
     void loadDirectoryStructure();
     // void refreshStructure();
     void loadSongs(); // started in qmlInitialized and emits songs changed
@@ -65,8 +70,8 @@ public:
     QSongList getSongs() const;
 
 private:
-    QString getValidRootDirectory() const;
-    void createStructureDirectory(QString path, int depth);
+    void setValidRootDirectory(QString rootDirectory);
+    void createStructureDirectoryRecursive(QString path, int depth);
 
 signals:
     void backendInitialized();

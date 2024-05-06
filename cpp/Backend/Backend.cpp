@@ -5,35 +5,29 @@ Backend::Backend(QObject *parent)
     m_personalization(nullptr),
     m_rootDirectory("")
 {
-
+    // create value // to have default data for initialisation
+    m_personalization = new Personalization(this);
 }
 
 Backend::~Backend()
 {
+    // save personalizations to json
     this->savePersonalization();
 }
 
 void Backend::initializeBackend()
 {
-    m_personalization = new Personalization(this);
-
-    DB << m_personalization->getIsDarkTheme();
-    DB << m_personalization->getDarkAccentColor();
-    DB << m_personalization->getLightAccentColor();
-
+    // load data from json
     if(m_personalization->loadPersonalizationFromJson())
     {
-
-        DB << m_personalization->getIsDarkTheme();
-        DB << m_personalization->getDarkAccentColor();
-        DB << m_personalization->getLightAccentColor();
         WR << "Personalization load failed";
         emit this->personalizationLoadError();
         return;
     }
-
     emit this->personalizationChanged();
-    this->setRootDirectory(m_personalization->getRootDirectory());
+
+    // now, having personalizations variable initialize directory structure
+    this->initializeDirectoryStructure();
 
 
     emit this->backendInitialized();
@@ -41,7 +35,10 @@ void Backend::initializeBackend()
 
 void Backend::savePersonalization()
 {
+    // update personalizations variable
     m_personalization->setRootDirectory(m_rootDirectory);
+
+    // save personalizations to json
     if(m_personalization->savePersonalizationToJson())
     {
         WR << "Personalization save failed";
@@ -50,26 +47,50 @@ void Backend::savePersonalization()
 
 void Backend::reinitializePersonalization()
 {
+    // delete value if exist
     if(m_personalization != nullptr)
         delete m_personalization;
+
+    // create value
     m_personalization = new Personalization(this);
 
+    // load data from json
     if(m_personalization->loadPersonalizationFromJson())
     {
         WR << "Personalization load failed";
         emit this->personalizationLoadError();
         return;
     }
-
     emit this->personalizationChanged();
-    this->setRootDirectory(m_personalization->getRootDirectory());
+
+    // now, having personalizations variable initialize directory structure
+    this->initializeDirectoryStructure();
+
+    // at this point any error that can occur is personalization error (ex: file not found)
+    // if this error was solved then just emit backendInitialized, but otherwise solution might be
+    //     much more complex
+    emit this->backendInitialized();
 }
 
 void Backend::useDefaultPersonalization()
 {
-    this->m_personalization->setDefaultPersonalizationData();
+    // use default data for personalizations
+    m_personalization->setDefaultPersonalizationData();
     emit this->personalizationChanged();
-    this->setRootDirectory(m_personalization->getRootDirectory());
+
+    // now, having personalizations variable initialize directory structure
+    this->initializeDirectoryStructure();
+
+    // at this point any error that can occur is personalization error (ex: file not found)
+    // if this error was solved then just emit backendInitialized, but otherwise solution might be
+    //     much more complex
+    emit this->backendInitialized();
+}
+
+void Backend::initializeDirectoryStructure()
+{
+    // update local root directory variable
+    this->setValidRootDirectory(m_personalization->getRootDirectory());
 }
 
 
@@ -85,11 +106,11 @@ void Backend::loadDirectoryStructure()
         delete i;
     m_directoryStructure.clear();
 
-    // get a valid root directory or an empty "" string
-    QString validRootDirectory = this->getValidRootDirectory();
+    // root directory is path or an empty "" string
+    if(m_rootDirectory != "")
+        createStructureDirectoryRecursive(m_rootDirectory, -1);
 
-    if(validRootDirectory != "")
-        createStructureDirectory(m_rootDirectory, -1);
+    // empty string will be represented in qml for example as '-'
 
     emit this->directoryStructureChanged();
 }
@@ -118,9 +139,6 @@ void Backend::loadSongs()
 
 void Backend::setRootDirectory(QString rootDirectory)
 {
-    if (!rootDirectory.isEmpty() && rootDirectory.startsWith("file:///"))
-        rootDirectory = rootDirectory.right(8);
-
     m_rootDirectory = rootDirectory;
     emit this->rootDirectoryChanged();
 }
@@ -145,27 +163,28 @@ Backend::QSongList Backend::getSongs() const
     return m_songs;
 }
 
-QString Backend::getValidRootDirectory() const
+void Backend::setValidRootDirectory(QString rootDirectory)
 {
-    // at this point root directory won't contains "file:///" prefix
-    // test if given from json or from select root path (GUI) is valid
-    // if not return "" // or default music location
+    if (!rootDirectory.isEmpty() && rootDirectory.startsWith("file:///"))
+        rootDirectory = rootDirectory.right(8);
 
-    if(!m_rootDirectory.isEmpty())
+    if(!rootDirectory.isEmpty())
     {
-        if(QDir(m_rootDirectory).exists())
-            return m_rootDirectory;
-        else
-            DB << "dir" << m_rootDirectory << "not exist!";
+        if(QDir(rootDirectory).exists())
+            this->setRootDirectory(rootDirectory);
+        else{
+            DB << "given directory:" << rootDirectory << "not exist!";
+            this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
+        }
     }
     else
-        WR << "dir" << m_rootDirectory << "is empty!";
-
-    // QString newPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    return "";
+    {
+        WR << "given directory:" << rootDirectory << "is empty!";
+        this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
+    }
 }
 
-void Backend::createStructureDirectory(QString path, int depth)
+void Backend::createStructureDirectoryRecursive(QString path, int depth)
 {
     // remove / if is in the end (but while displayling better be there)
     if (!path.isEmpty() && path.endsWith("/"))
@@ -184,7 +203,7 @@ void Backend::createStructureDirectory(QString path, int depth)
     QStringList dirList = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 
     for(const auto &dir : dirList)
-        createStructureDirectory(path + '/' + dir, depth+1);
+        createStructureDirectoryRecursive(path + '/' + dir, depth+1);
 
 }
 

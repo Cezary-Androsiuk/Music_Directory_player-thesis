@@ -28,7 +28,7 @@
 #if MULTI_LINE
 #define WR qDebug() << QString("\n##############################################################\n### " + QString(F_NAME) + ":\n -").toStdString().c_str()
 #else
-#define WR qDebug() << QString("##############################################################\n### " + QString(F_NAME) + " -").toStdString().c_str()
+#define WR qDebug() << QString(/*"##############################################################"*/"\n### " + QString(F_NAME) + " -").toStdString().c_str()
 #endif // MULTILINE
 #endif // ifndef WR
 #endif // DEBUGPRINT_H
