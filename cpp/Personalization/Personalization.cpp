@@ -8,7 +8,7 @@ Personalization::Personalization(QObject *parent)
     m_rootDirectory(DEFAULT_ROOT_DIRECTORY),
     m_showTooltips(DEFAULT_SHOW_TOOLTIPS)
 {
-
+    QFile::remove(PERSONALIZATIONS_JSON_PATH);
 }
 
 Personalization::~Personalization()
@@ -79,19 +79,19 @@ int Personalization::loadPersonalizationFromJson()
     }
     {
         QString key = "dark accent color";
-        if(jp.contains(key)) setDarkAccentColor((QRgb)jp[key].toInteger());
+        if(jp.contains(key)) this->setDarkAccentColor((QRgb)jp[key].toInteger());
         else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
 
     }
     {
         QString key = "light accent color";
-        if(jp.contains(key)) setLightAccentColor((QRgb)jp[key].toInteger());
+        if(jp.contains(key)) this->setLightAccentColor((QRgb)jp[key].toInteger());
         else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
 
     }
     {
         QString key = "root directory";
-        if(jp.contains(key)) setRootDirectory(jp[key].toString());
+        if(jp.contains(key)) this->setRootDirectory(jp[key].toString());
         else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
     }
     {
@@ -181,6 +181,7 @@ bool Personalization::getShowTooltips() const
 void Personalization::setIsDarkTheme(bool isDarkTheme)
 {
     m_isDarkTheme = isDarkTheme;
+    DB << "theme changed to " << m_isDarkTheme;
     emit this->isDarkThemeChanged();
 }
 

@@ -33,7 +33,6 @@ ApplicationWindow {
     */
 
     Component.onCompleted: {
-        dark_theme = true; // as a initialize
         console.log("qml initialized")
         Backend.initializeBackend()
         // this way allow to display popup when anything failed in loading backend
@@ -69,6 +68,7 @@ ApplicationWindow {
         focus: true
         Keys.onEscapePressed: root.close()
         Keys.onSpacePressed: console.log("-")
+        Keys.onDeletePressed: p_personalizationLoadError.open()
 
         StackView{
             id: mainStackView

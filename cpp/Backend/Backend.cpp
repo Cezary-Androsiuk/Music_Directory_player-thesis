@@ -5,7 +5,7 @@ Backend::Backend(QObject *parent)
     m_personalization(nullptr),
     m_rootDirectory("")
 {
-
+    m_personalization = new Personalization(this);
 }
 
 Backend::~Backend()
@@ -15,18 +15,8 @@ Backend::~Backend()
 
 void Backend::initializeBackend()
 {
-    m_personalization = new Personalization(this);
-
-    DB << m_personalization->getIsDarkTheme();
-    DB << m_personalization->getDarkAccentColor();
-    DB << m_personalization->getLightAccentColor();
-
     if(m_personalization->loadPersonalizationFromJson())
     {
-
-        DB << m_personalization->getIsDarkTheme();
-        DB << m_personalization->getDarkAccentColor();
-        DB << m_personalization->getLightAccentColor();
         WR << "Personalization load failed";
         emit this->personalizationLoadError();
         return;
@@ -52,6 +42,7 @@ void Backend::reinitializePersonalization()
 {
     if(m_personalization != nullptr)
         delete m_personalization;
+
     m_personalization = new Personalization(this);
 
     if(m_personalization->loadPersonalizationFromJson())

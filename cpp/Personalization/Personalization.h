@@ -29,7 +29,7 @@ class Personalization : public QObject
 {
     Q_OBJECT
     // frontend app personalisation accessors
-    Q_PROPERTY(bool isDarkTheme                 READ getIsDarkTheme             WRITE setIsDarkTheme            NOTIFY isDarkThemeChanged)
+    Q_PROPERTY(bool isDarkTheme                 READ getIsDarkTheme             WRITE setIsDarkTheme            NOTIFY isDarkThemeChanged FINAL)
     Q_PROPERTY(QColor darkAccentColor           READ getDarkAccentColor         WRITE setDarkAccentColor        NOTIFY darkAccentColorChanged)
     Q_PROPERTY(QColor lightAccentColor          READ getLightAccentColor        WRITE setLightAccentColor       NOTIFY lightAccentColorChanged)
     Q_PROPERTY(QString rootDirectory            READ getRootDirectory           WRITE setRootDirectory          NOTIFY rootDirectoryChanged)

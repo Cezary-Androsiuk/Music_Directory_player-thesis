@@ -11,9 +11,9 @@ Popup {
     property string textMB: "Recreate" // middle button text
     property string textRB: "Exit" // right button text
 
-    property int fontSizeLB: 17 // left button font size
-    property int fontSizeMB: 17 // middle button font size
-    property int fontSizeRB: 17 // right button font size
+    property int fontSizeLB: 12 // left button font size
+    property int fontSizeMB: 12 // middle button font size
+    property int fontSizeRB: 12 // right button font size
 
     property bool jea: true // just exit action
 
@@ -27,7 +27,7 @@ Popup {
     width: 310
 
     x: root._w/2 - width/2
-    y: root._h * 1/3 - height/2
+    y: (root._h/2 - height/4) - height/2
 
     dim: true
     modal: true

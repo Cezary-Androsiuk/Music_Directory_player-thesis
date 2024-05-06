@@ -130,13 +130,13 @@ Page {
                     delegate_text: modelData.name
                     delegate_value: {
                         if(modelData.id === 300)
-                            Backend.personalization.rootDirectory
+                            Backend.rootDirectory
                     }
                     onDelegate_valueChanged: {
                         if(modelData.id === 300)
                         {
-                            if(Backend.personalization.rootDirectory !== delegate_value) // this condition removes "Binding loop" <3
-                                Backend.personalization.rootDirectory = delegate_value
+                            if(Backend.rootDirectory !== delegate_value) // this condition removes "Binding loop" <3
+                                Backend.rootDirectory = delegate_value
                         }
                     }
                 }
