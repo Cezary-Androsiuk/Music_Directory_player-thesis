@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 
 import "qrc:/Music_directory_player/qml/components"
+import "qrc:/Music_directory_player/qml/delegates"
 
 Page {
 
@@ -17,7 +18,7 @@ Page {
     ScrollView{
         id: scrollView
         anchors.fill: parent
-        visible: Backend.rootDirectory !== ""
+        visible: Backend.personalization.rootDirectory !== ""
         ListView{
             model: Backend.songs
             boundsBehavior: Flickable.StopAtBounds

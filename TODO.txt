@@ -1,0 +1,9 @@
+DONE - przenieść pliki zawierające delegate z components/ do delegate/
+- połączyć budowanie ścieżki z inicjalizacją struktury katalogu
+- dodać robienie struktury katalogu po za inicjalizacją (po zmianie ścieżki)
+DONE - dodać zapisywanie rozszerzeń plików muzycznych 
+? dodać zapisywanie rozszerzeń plików ikonek
+- ustawić budowanie struktury zależnie od muzyk (tam gdzie nie ma muzyki ignoruj)
+? poprawić tekst na przyciskach popup
+? sprowadzić pupupy do wspólnego mianownika
+- sprawdzić co się dzieje po kliknięciu po za popup (gdy nie jest to popup informacyjny lub potwierdzenia)

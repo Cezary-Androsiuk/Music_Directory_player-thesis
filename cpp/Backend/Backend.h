@@ -29,9 +29,6 @@
  * 7
  */
 
-#define DEFAULT_ROOT_DIRECTORY ""
-// #define DEFAULT_ROOT_DIRECTORY QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-
 class Backend : public QObject
 {
     typedef QList<Directory *> QDirectoryList;
@@ -39,7 +36,6 @@ class Backend : public QObject
 
     Q_OBJECT
     Q_PROPERTY(Personalization *personalization     READ getPersonalization                                 NOTIFY personalizationChanged       FINAL)
-    Q_PROPERTY(QString rootDirectory                READ getRootDirectory           WRITE setRootDirectory  NOTIFY rootDirectoryChanged         FINAL)
     Q_PROPERTY(QDirectoryList directoryStructure    READ getDirectoryStructure                              NOTIFY directoryStructureChanged    FINAL)
     Q_PROPERTY(QSongList songs                      READ getSongs                                           NOTIFY songsChanged                 FINAL)
 
@@ -57,38 +53,42 @@ public slots:
     void initializeDirectoryStructure();
 
     void loadDirectoryStructure();
-    // void refreshStructure();
     void loadSongs(); // started in qmlInitialized and emits songs changed
 
-    void setRootDirectory(QString rootDirectory);
-
-public:
+public: // getters
     Personalization *getPersonalization() const;
 
-    QString getRootDirectory() const;
+    QUrl getRootDirectory() const;
     QDirectoryList getDirectoryStructure() const;
     QSongList getSongs() const;
+    QString getSongExtensions() const;
 
-private:
-    void setValidRootDirectory(QString rootDirectory);
+public: // setters
+    void setRootDirectory(QUrl rootDirectory);
+
+    void setSongExtensions(QString songExtensions);
+
+private: // private methods
     void createStructureDirectoryRecursive(QString path, int depth);
 
-signals:
+signals: // something happend
     void backendInitialized();
     void personalizationLoadError();
 
-
+signals: // some variable changed
     void personalizationChanged();
-    void songsChanged();
     void rootDirectoryChanged();
     void directoryStructureChanged();
+    void songsChanged();
+    void songExtensionsChanged();
 
 private:
 
     Personalization *m_personalization;
-    QString m_rootDirectory; // stores root path where all songs are located (also in subfolders)
+    QUrl m_rootDirectory; // stores root path where all songs are located (also in subfolders)
     QDirectoryList m_directoryStructure; // stores what subfolders are in rootDirectory // rename to directory (or something) and will contains also bool m_ischoosed
     QSongList m_songs; // stores what songs are in playlist // QStringList m_directoryStructureSongs; // maybe better name
+    QString m_songExtensions;
 };
 
 #endif // BACKEND_H

@@ -3,10 +3,30 @@
 Backend::Backend(QObject *parent)
     : QObject{parent},
     m_personalization(nullptr),
-    m_rootDirectory("")
+    m_rootDirectory(QUrl())
 {
     // create value // to have default data for initialisation
     m_personalization = new Personalization(this);
+
+    // on personalization's rootDirectory changed, change Backend's rootDirectory
+    QObject::connect(
+        m_personalization, Personalization::rootDirectoryChanged,
+        this, [this](){
+            this->setRootDirectory(this->m_personalization->getRootDirectory());
+        });
+
+    // on personalization's songExtensions changed, change Backend's songExtensions
+    QObject::connect(
+        m_personalization, Personalization::songExtensionsChanged,
+        this, [this](){
+            this->setSongExtensions(m_personalization->getSongExtensions());
+        });
+
+    // on rootDirectory changed, change directoryStructure
+    QObject::connect(
+        this, Backend::rootDirectoryChanged,
+        this, Backend::loadDirectoryStructure);
+
 }
 
 Backend::~Backend()
@@ -26,9 +46,6 @@ void Backend::initializeBackend()
     }
     emit this->personalizationChanged();
 
-    // now, having personalizations variable initialize directory structure
-    this->initializeDirectoryStructure();
-
 
     emit this->backendInitialized();
 }
@@ -47,13 +64,6 @@ void Backend::savePersonalization()
 
 void Backend::reinitializePersonalization()
 {
-    // delete value if exist
-    if(m_personalization != nullptr)
-        delete m_personalization;
-
-    // create value
-    m_personalization = new Personalization(this);
-
     // load data from json
     if(m_personalization->loadPersonalizationFromJson())
     {
@@ -62,9 +72,6 @@ void Backend::reinitializePersonalization()
         return;
     }
     emit this->personalizationChanged();
-
-    // now, having personalizations variable initialize directory structure
-    this->initializeDirectoryStructure();
 
     // at this point any error that can occur is personalization error (ex: file not found)
     // if this error was solved then just emit backendInitialized, but otherwise solution might be
@@ -78,9 +85,6 @@ void Backend::useDefaultPersonalization()
     m_personalization->setDefaultPersonalizationData();
     emit this->personalizationChanged();
 
-    // now, having personalizations variable initialize directory structure
-    this->initializeDirectoryStructure();
-
     // at this point any error that can occur is personalization error (ex: file not found)
     // if this error was solved then just emit backendInitialized, but otherwise solution might be
     //     much more complex
@@ -89,26 +93,33 @@ void Backend::useDefaultPersonalization()
 
 void Backend::initializeDirectoryStructure()
 {
-    // update local root directory variable
-    this->setValidRootDirectory(m_personalization->getRootDirectory());
+    if(m_rootDirectory.isValid())
+    {
+        if(QDir(m_rootDirectory.toString()).exists())
+        {
+
+        }
+        else
+            DB << "directory"<< m_rootDirectory <<"not exist";
+    }
+    else
+        DB << "directory"<< m_rootDirectory <<"is not valid!";
 }
 
 
 void Backend::loadDirectoryStructure()
 {
-    // // can convert local file to url and url to local file
-    // QUrl url = QUrl::fromLocalFile(m_rootDirectory);
-    // DB << url.toLocalFile();
-    // DB << url.toString();
+    DB << "loading new structure";
 
     // delete old structure
     for(const auto &i: m_directoryStructure)
         delete i;
     m_directoryStructure.clear();
 
+
     // root directory is path or an empty "" string
-    if(m_rootDirectory != "")
-        createStructureDirectoryRecursive(m_rootDirectory, -1);
+    if(m_rootDirectory.isValid())
+        createStructureDirectoryRecursive(m_rootDirectory.toLocalFile(), -1);
 
     // empty string will be represented in qml for example as '-'
 
@@ -137,18 +148,12 @@ void Backend::loadSongs()
     emit this->songsChanged();
 }
 
-void Backend::setRootDirectory(QString rootDirectory)
-{
-    m_rootDirectory = rootDirectory;
-    emit this->rootDirectoryChanged();
-}
-
 Personalization *Backend::getPersonalization() const
 {
     return m_personalization;
 }
 
-QString Backend::getRootDirectory() const
+QUrl Backend::getRootDirectory() const
 {
     return m_rootDirectory;
 }
@@ -163,25 +168,18 @@ Backend::QSongList Backend::getSongs() const
     return m_songs;
 }
 
-void Backend::setValidRootDirectory(QString rootDirectory)
+void Backend::setRootDirectory(QUrl rootDirectory)
 {
-    if (!rootDirectory.isEmpty() && rootDirectory.startsWith("file:///"))
-        rootDirectory = rootDirectory.right(8);
+    DB << "new root directory in Backend:" << rootDirectory;
+    m_rootDirectory = rootDirectory;
+    emit this->rootDirectoryChanged();
+}
 
-    if(!rootDirectory.isEmpty())
-    {
-        if(QDir(rootDirectory).exists())
-            this->setRootDirectory(rootDirectory);
-        else{
-            DB << "given directory:" << rootDirectory << "not exist!";
-            this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
-        }
-    }
-    else
-    {
-        WR << "given directory:" << rootDirectory << "is empty!";
-        this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
-    }
+void Backend::setSongExtensions(QString songExtensions)
+{
+    DB << "new song extensions in Backend:" << songExtensions;
+    m_songExtensions = songExtensions;
+    emit this->songExtensionsChanged();
 }
 
 void Backend::createStructureDirectoryRecursive(QString path, int depth)

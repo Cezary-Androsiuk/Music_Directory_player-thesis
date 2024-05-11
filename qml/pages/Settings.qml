@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
-import "qrc:/Music_directory_player/qml/components"
+import "qrc:/Music_directory_player/qml/delegates"
 import "qrc:/Music_directory_player/qml/popups"
 
 Page {
@@ -12,6 +12,8 @@ Page {
         {id: 200, name: "Accent Color", delegate_type: "color"},
         {id: 300, name: "Root Path", delegate_type: "select path"},
         {id: 400, name: "Show Tooltips", delegate_type: "switch"},
+        {id: 500, name: "Songs Extenstions", delegate_type: "string"},
+        {id: 600, name: "Song Transition Time", delegate_type: "integer"}
     ]
     property int delegateHeight: 60
     property int delegateWidth: width
@@ -68,6 +70,8 @@ Page {
                 else if(modelData.delegate_type === "switch")       switchComponent
                 else if(modelData.delegate_type === "color")        colorComponent
                 else if(modelData.delegate_type === "select path")  selectPathComponent
+                else if(modelData.delegate_type === "string")       stringComponent
+                else if(modelData.delegate_type === "integer")      integerComponent
                 else{
                     console.log("#####################################################");
                     console.log("UNKNOWN DELEGATE TYPE!");
@@ -130,14 +134,44 @@ Page {
                     delegate_text: modelData.name
                     delegate_value: {
                         if(modelData.id === 300)
-                            Backend.rootDirectory
+                            Backend.personalization.rootDirectory
+                            // Backend.rootDirectory
                     }
                     onDelegate_valueChanged: {
                         if(modelData.id === 300)
                         {
-                            if(Backend.rootDirectory !== delegate_value) // this condition removes "Binding loop" <3
-                                Backend.rootDirectory = delegate_value
+
+                            if(Backend.personalization.rootDirectory !== delegate_value) // this condition removes "Binding loop" <3
+                                Backend.personalization.rootDirectory = delegate_value
                         }
+                    }
+                }
+            }
+
+            Component{
+                id: stringComponent
+                StringField{
+                    delegate_text: modelData.name
+                    delegate_value: {
+                        if(modelData.id === 500)
+                            Backend.personalization.songExtensions
+                    }
+                    onDelegate_valueChanged: {
+
+                    }
+                }
+            }
+
+            Component{
+                id: integerComponent
+                IntegerField{
+                    delegate_text: modelData.name
+                    delegate_value: {
+                        if(modelData.id === 600)
+                            Backend.personalization.songTransitionTimeMS
+                    }
+                    onDelegate_valueChanged: {
+
                     }
                 }
             }

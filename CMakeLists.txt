@@ -27,15 +27,18 @@ qt_add_qml_module(appMusic_directory_player
 
     QML_FILES qml/components/LongSeparator.qml
     QML_FILES qml/components/DirComboBox.qml
-    QML_FILES qml/components/ListButtonField.qml
-    QML_FILES qml/components/LeftTextInList.qml
     QML_FILES qml/components/ScrollCurrentSongMarker.qml
-    QML_FILES qml/components/FlatButton.qml
     QML_FILES qml/components/MainPageHeader.qml
     QML_FILES qml/components/MainPageFooter.qml
-    QML_FILES qml/components/ColorSelectField.qml
-    QML_FILES qml/components/PathSelectField.qml
-    QML_FILES qml/components/SwitchField.qml
+
+    QML_FILES qml/delegates/ListButtonField.qml
+    QML_FILES qml/delegates/LeftTextInList.qml
+    QML_FILES qml/delegates/FlatButton.qml
+    QML_FILES qml/delegates/ColorSelectField.qml
+    QML_FILES qml/delegates/PathSelectField.qml
+    QML_FILES qml/delegates/StringField.qml
+    QML_FILES qml/delegates/SwitchField.qml
+    QML_FILES qml/delegates/IntegerField.qml
 
     QML_FILES qml/popups/Popup1.qml
     QML_FILES qml/popups/Popup2.qml

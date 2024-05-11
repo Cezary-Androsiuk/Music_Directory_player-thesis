@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QString>
 
-#define PRETTY_FUNC false
+#define PRETTY_FUNC true
 #define MULTI_LINE false
 
 #if PRETTY_FUNC
@@ -31,4 +31,15 @@
 #define WR qDebug() << QString(/*"##############################################################"*/"\n### " + QString(F_NAME) + " -").toStdString().c_str()
 #endif // MULTILINE
 #endif // ifndef WR
+
+// // for later:
+// #define _DB << QString(F_NAME) << "-    "
+// #define DB_OK   qDebug() << "   OK   " _DB
+// #define DB_FAIL qDebug() << " FAIL ! " _DB
+// #define DB_INFO qDebug() << "    ?   " _DB
+
+// later, in addition, you can add saving the information passed to the DB in the log file and add a class for QML to make it work instead of console.log
+
+
+
 #endif // DEBUGPRINT_H

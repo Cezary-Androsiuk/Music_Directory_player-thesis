@@ -53,8 +53,8 @@ ApplicationWindow {
     Popup3{
         id: p_personalizationLoadError
         textMessage: "Error while loading personalizations"
-        textLB: "Reload"
-        textMB: "Use Default"
+        textLB: "Retry"
+        textMB: "Continue"
         textRB: "Exit"
 
         onClickedLB: Backend.reinitializePersonalization()
@@ -146,9 +146,6 @@ ApplicationWindow {
     function rgb(r, g, b, a=255){ return Qt.rgba(r/255, g/255, b/255, a/255); }
 
     property bool dark_theme: Backend.personalization.isDarkTheme
-    onDark_themeChanged: {
-        console.log("changed theme to " + (dark_theme ? "dark" : "light"))
-    }
 
     property color _color_dark_accent1: rgb(255,255,255)
     property color _color_light_accent1: rgb(0,0,0)

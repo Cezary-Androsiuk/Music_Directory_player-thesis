@@ -8,8 +8,11 @@ Item {
     id: pathSelectField
     anchors.fill: parent
 
-    property var delegate_text: null
-    property string delegate_value: ""
+    property string delegate_text
+    required property var delegate_value
+    onDelegate_valueChanged: {
+        console.log(" new delegate value: " + delegate_value)
+    }
 
     Text{
         anchors{
@@ -58,7 +61,7 @@ Item {
             width: height * 0.7
 
             FlatButton{
-                dltDescription: "Select File\nCurrent File: " + delegate_value
+                dltDescription: "Select " + delegate_text
                 dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
                 dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")
                 onUserClicked: {
@@ -72,24 +75,9 @@ Item {
             title: "Select a Path"
             options: FolderDialog.ShowDirsOnly
 
-            currentFolder: {
-                if(delegate_value === "")
-                {
-                    if(Qt.platform.os === "windows")
-                        "file:///C:/"
-                    else if(Qt.platform.os === "linux")
-                        "file:///"
-                }
-                else
-                    "file:///" + delegate_value
-            }
+            currentFolder: delegate_value
 
-
-            onAccepted: {
-                var path = "" + folderDialog.selectedFolder;
-                delegate_value = path.replace("file:///", "")
-
-            }
+            onAccepted:  delegate_value = folderDialog.selectedFolder;
             onRejected: folderDialog.close()
         }
 

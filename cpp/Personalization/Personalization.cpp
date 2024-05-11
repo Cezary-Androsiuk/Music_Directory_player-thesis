@@ -6,9 +6,12 @@ Personalization::Personalization(QObject *parent)
     m_darkAccentColor(DEFAULT_DARK_ACCENT_COLOR),
     m_lightAccentColor(DEFAULT_LIGHT_ACCENT_COLOR),
     m_rootDirectory(DEFAULT_ROOT_DIRECTORY),
-    m_showTooltips(DEFAULT_SHOW_TOOLTIPS)
+    m_showTooltips(DEFAULT_SHOW_TOOLTIPS),
+    m_songExtensions(DEFAULT_SONG_EXTENSIONS),
+    m_songTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS)
 {
-    QFile::remove(PERSONALIZATIONS_JSON_PATH);
+    // WR << "REMOVING PERSONALIZATIONS";
+    // QFile::remove(PERSONALIZATIONS_JSON_PATH);
 }
 
 Personalization::~Personalization()
@@ -24,6 +27,8 @@ void Personalization::printValues() const
     DB << "\tlightAccentColor: " << m_lightAccentColor.rgba();
     DB << "\trootDirectory: " << m_rootDirectory;
     DB << "\tshowTooltips: " << m_showTooltips;
+    DB << "\tsongExtensions: " << m_songExtensions;
+    DB << "\tsongTransitionTimeMS: " << m_songTransitionTimeMS;
 #endif
 }
 
@@ -31,17 +36,18 @@ void Personalization::setDefaultPersonalizationData()
 {
     DB << "assigning default values";
 
-    m_isDarkTheme = DEFAULT_IS_DARK_THEME;
-    m_darkAccentColor = DEFAULT_DARK_ACCENT_COLOR;
-    m_lightAccentColor = DEFAULT_LIGHT_ACCENT_COLOR;
-    m_rootDirectory = DEFAULT_ROOT_DIRECTORY;
-    m_showTooltips = DEFAULT_SHOW_TOOLTIPS;
+    this->setIsDarkTheme(DEFAULT_IS_DARK_THEME);
+    this->setDarkAccentColor(DEFAULT_DARK_ACCENT_COLOR);
+    this->setLightAccentColor(DEFAULT_LIGHT_ACCENT_COLOR);
+    this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
+    this->setShowTooltips(DEFAULT_SHOW_TOOLTIPS);
+    this->setSongExtensions(DEFAULT_SONG_EXTENSIONS);
+    this->setSongTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS);
 }
 
 int Personalization::loadPersonalizationFromJson()
 {
     auto PJP = PERSONALIZATIONS_JSON_PATH;
-    this->setDefaultPersonalizationData();
     if(!QFile(PJP).exists()){
         WR << "file " << PERSONALIZATIONS_JSON_PATH << " not found";
         return 10;
@@ -50,7 +56,6 @@ int Personalization::loadPersonalizationFromJson()
     QFile json_file(PJP);
     if(!json_file.open(QIODevice::ReadOnly | QIODevice::Text)){
         WR << "Can not open personalization json file: " << PJP;
-        this->setDefaultPersonalizationData();
         return 20;
     }
 
@@ -60,45 +65,44 @@ int Personalization::loadPersonalizationFromJson()
 
     if(json_error.error != QJsonParseError::NoError) {
         WR << "json parse error: " << json_error.errorString();
-        this->setDefaultPersonalizationData();
         return 30;
     }
 
     if(!json_data.isObject()){
         WR << "json file does not contains json object";
-        this->setDefaultPersonalizationData();
         return 40;
     }
 
+    // at this point data are default
+
     auto jp = json_data.object();
+    QString key;
 
-    {
-        QString key = "is dark theme";
-        if(jp.contains(key)) this->setIsDarkTheme(jp[key].toBool());
-        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-    }
-    {
-        QString key = "dark accent color";
-        if(jp.contains(key)) this->setDarkAccentColor((QRgb)jp[key].toInteger());
-        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
 
-    }
-    {
-        QString key = "light accent color";
-        if(jp.contains(key)) this->setLightAccentColor((QRgb)jp[key].toInteger());
-        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+    // try to load data, but if key is missing then notify
+    // following code is compressed and can be used only for this purpose
 
-    }
-    {
-        QString key = "root directory";
-        if(jp.contains(key)) this->setRootDirectory(jp[key].toString());
-        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-    }
-    {
-        QString key = "show tooltips";
-        if(jp.contains(key)) this->setShowTooltips(jp[key].toBool());
-        else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
-    }
+    key = "is dark theme";
+    CHECK_KEY(this->setIsDarkTheme(jp[key].toBool()))
+
+    key = "dark accent color";
+    CHECK_KEY(this->setDarkAccentColor((QRgb)jp[key].toInteger()))
+
+    key = "light accent color";
+    CHECK_KEY(this->setLightAccentColor((QRgb)jp[key].toInteger()))
+
+    key = "root directory";
+    CHECK_KEY(this->setRootDirectory(jp[key].toString()))
+
+    key = "show tooltips";
+    CHECK_KEY(this->setShowTooltips(jp[key].toBool()))
+
+    key = "song extensions";
+    CHECK_KEY(this->setSongExtensions(jp[key].toString()))
+
+    key = "song transition time (ms)";
+    CHECK_KEY(this->setSongTransitionTimeMS(jp[key].toInt()))
+
 
     DB << "personalization data readed!";
     this->printValues();
@@ -129,15 +133,18 @@ int Personalization::savePersonalizationToJson()
         }
     }
 
-    QJsonObject json_personalizations;
-    json_personalizations["!NOTE"] = QString(DEFAULT_NOTE);
-    json_personalizations["is dark theme"] = this->getIsDarkTheme();
-    json_personalizations["dark accent color"] = (qint64) this->getDarkAccentColor().rgba();
-    json_personalizations["light accent color"] = (qint64) this->getLightAccentColor().rgba();
-    json_personalizations["root directory"] = this->getRootDirectory();
-    json_personalizations["show tooltips"] = this->getShowTooltips();
+    QJsonObject json_object;
+    json_object["!NOTE"] = QString(DEFAULT_NOTE);
 
-    QJsonDocument json_data(json_personalizations);
+    json_object["is dark theme"] = this->getIsDarkTheme();
+    json_object["dark accent color"] = (qint64) this->getDarkAccentColor().rgba();
+    json_object["light accent color"] = (qint64) this->getLightAccentColor().rgba();
+    json_object["root directory"] = this->getRootDirectory().toString();
+    json_object["show tooltips"] = this->getShowTooltips();
+    json_object["song extensions"] = this->getSongExtensions();
+    json_object["song transition time (ms)"] = this->getSongTransitionTimeMS();
+
+    QJsonDocument json_data(json_object);
 
     QFile file(PJP);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -168,7 +175,7 @@ QColor Personalization::getLightAccentColor() const
     return m_lightAccentColor;
 }
 
-QString Personalization::getRootDirectory() const
+QUrl Personalization::getRootDirectory() const
 {
     return m_rootDirectory;
 }
@@ -176,6 +183,16 @@ QString Personalization::getRootDirectory() const
 bool Personalization::getShowTooltips() const
 {
     return m_showTooltips;
+}
+
+QString Personalization::getSongExtensions() const
+{
+    return m_songExtensions;
+}
+
+int Personalization::getSongTransitionTimeMS() const
+{
+    return m_songTransitionTimeMS;
 }
 
 
@@ -197,7 +214,7 @@ void Personalization::setLightAccentColor(const QColor &accentColor)
     emit this->lightAccentColorChanged();
 }
 
-void Personalization::setRootDirectory(const QString &newDirectory)
+void Personalization::setRootDirectory(const QUrl &newDirectory)
 {
     m_rootDirectory = newDirectory;
     emit this->rootDirectoryChanged();
@@ -207,5 +224,21 @@ void Personalization::setShowTooltips(bool showTooltips)
 {
     m_showTooltips = showTooltips;
     emit this->showTooltipsChanged();
+}
+
+void Personalization::setSongExtensions(const QString &songExtensions)
+{
+    m_songExtensions = songExtensions;
+    emit this->songExtensionsChanged();
+}
+
+void Personalization::setSongTransitionTimeMS(int songTransitionTimeMS)
+{
+    if(songTransitionTimeMS < 0){
+        WR << "Trying to set negative time!";
+        songTransitionTimeMS = 0;
+    }
+    m_songTransitionTimeMS = songTransitionTimeMS;
+    emit this->songTransitionTimeMSChanged();
 }
 

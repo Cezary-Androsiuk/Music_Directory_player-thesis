@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import "qrc:/Music_directory_player/qml/delegates"
+
 Item{
     id: pageHeader
     height: 40
@@ -45,7 +47,14 @@ Item{
         }
 
         DirComboBox{
-            dltRootDirectory: Backend.rootDirectory
+            dltRootDirectory: {
+                // allways will contain "file://" prefix
+                var path = "" + Backend.personalization.rootDirectory;
+                path = path.replace("file:///", "");
+                path;
+
+            }
+
             dltModel: Backend.directoryStructure
         }
     }
