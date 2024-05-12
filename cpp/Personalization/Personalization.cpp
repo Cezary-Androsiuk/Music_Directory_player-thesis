@@ -198,42 +198,63 @@ int Personalization::getSongTransitionTimeMS() const
 
 void Personalization::setIsDarkTheme(bool isDarkTheme)
 {
+    if(m_isDarkTheme == isDarkTheme) // removes binding loop in qml
+        return;
+
     m_isDarkTheme = isDarkTheme;
     emit this->isDarkThemeChanged();
 }
 
 void Personalization::setDarkAccentColor(const QColor &accentColor)
 {
+    if(m_darkAccentColor == accentColor) // removes binding loop in qml
+        return;
+
     m_darkAccentColor = accentColor;
     emit this->darkAccentColorChanged();
 }
 
 void Personalization::setLightAccentColor(const QColor &accentColor)
 {
+    if(m_lightAccentColor == accentColor) // removes binding loop in qml
+        return;
+
     m_lightAccentColor = accentColor;
     emit this->lightAccentColorChanged();
 }
 
 void Personalization::setRootDirectory(const QUrl &newDirectory)
 {
+    if(m_rootDirectory == newDirectory) // removes binding loop in qml
+        return;
+
     m_rootDirectory = newDirectory;
     emit this->rootDirectoryChanged();
 }
 
 void Personalization::setShowTooltips(bool showTooltips)
 {
+    if(m_showTooltips == showTooltips) // removes binding loop in qml
+        return;
+
     m_showTooltips = showTooltips;
     emit this->showTooltipsChanged();
 }
 
 void Personalization::setSongExtensions(const QString &songExtensions)
 {
+    if(m_songExtensions == songExtensions) // removes binding loop in qml
+        return;
+
     m_songExtensions = songExtensions;
     emit this->songExtensionsChanged();
 }
 
 void Personalization::setSongTransitionTimeMS(int songTransitionTimeMS)
 {
+    if(m_songTransitionTimeMS == songTransitionTimeMS) // removes binding loop in qml
+        return;
+
     if(songTransitionTimeMS < 0){
         WR << "Trying to set negative time!";
         songTransitionTimeMS = 0;

@@ -7,41 +7,48 @@ Item {
     id: dirComboBox
     anchors.fill: parent
 
-    property var dltModel: [
-        {path: "example", depth: 0},
-        {path: "data", depth: 1},
-        {path: "in", depth: 2},
-        {path: "list", depth: 3}
-    ]
-    required property string dltRootDirectory
-    property int dltDepthIndent: 20
-
     readonly property int dltListElementHeight: selectedValueField.height * 0.8;
+    property int dltPopupHeight: 0
+    property int dltDepthIndent: 20
     property int dltPixelSize: 15
+    readonly property bool dltCheckboxVisible: true
+
+    required property string dltRootDirectory
+    onDltRootDirectoryChanged: {
+
+    }
+
+    property var dltModel: [
+        {path: "example", depth: 0, include: true},
+        {path: "data", depth: 1, include: false},
+        {path: "in", depth: 2, include: true},
+        {path: "list", depth: 3, include: true}
+    ]
+    onDltModelChanged: {
+        updatePopupHeight()
+    }
 
     Component.onCompleted: {
-        if(dltRootDirectory === "")
-            dltRootDirectory = "---"
+        updatePopupHeight()
+        listLoader.active = true;
+    }
 
-        var popup_height = dltListElementHeight; // add for dltRootDirectory
+    function updatePopupHeight(){
+        var popup_height = selectedValueField.height; // add for header: dltRootDirectory name
         for(var _element of dltModel)
             popup_height += dltListElementHeight;
-        if(popup_height === 0)
-            popup_height = 10;
 
         var max_height = dltListElementHeight * 7.8; // max 3.8 buttons will be shown
         if(popup_height > max_height)
             popup_height = max_height;
 
-        modelList.height = popup_height;
-
-        listLoader.active = true;
+        dltPopupHeight = popup_height
     }
 
     Popup{
         id: modelList
-        // height set in parent's onCompleted
         width: selectedValueField.width
+        height: dltPopupHeight
         x: selectedValueField.x
         y: selectedValueField.y
 
@@ -108,8 +115,13 @@ Item {
                         // DirCheckBox{
 
                         // }
+                        visible: dltCheckboxVisible
                         CheckBox{
                             anchors.fill: parent
+                            checked: modelData.include
+                            onCheckedChanged: {
+                                dltModel[index].include = checked
+                            }
                         }
                     }
 
@@ -117,7 +129,13 @@ Item {
                     Text{
                         anchors{
                             top: parent.top
-                            left: checkbox.right
+                            left: {
+                                if(dltCheckboxVisible)
+                                    checkbox.right
+                                else
+                                    parent.left
+                            }
+
                             right: parent.right
                             bottom: parent.bottom
                             leftMargin: {
@@ -157,6 +175,7 @@ Item {
             fill: parent
             // margins: 5
         }
+        enabled: dltRootDirectory !== ""
         onClicked: {
             modelList.open()
         }
@@ -170,7 +189,7 @@ Item {
             rightMargin: 10
         }
 
-        text: dltRootDirectory
+        text: dltRootDirectory === "" ? "---" : dltRootDirectory
 
         color: selectedValueField.pressed ? root.color_element_press : root.color_element_idle
         font.pixelSize: dltPixelSize

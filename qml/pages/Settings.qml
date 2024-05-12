@@ -91,16 +91,9 @@ Page {
                         else if(modelData.id === 400) Backend.personalization.showTooltips
                     }
                     onDelegate_valueChanged: {
-                        if(modelData.id === 100)
-                        {
-                            if(Backend.personalization.isDarkTheme !== delegate_value) // this condition removes "Binding loop" <3
-                                Backend.personalization.isDarkTheme = delegate_value
-                        }
-                        else if(modelData.id === 400)
-                        {
-                            if(Backend.personalization.showTooltips !== delegate_value) // this condition removes "Binding loop" <3
-                                Backend.personalization.showTooltips = delegate_value
-                        }
+                        if(false); // below lines are so beauty when equal <3
+                        else if(modelData.id === 100) Backend.personalization.isDarkTheme = delegate_value
+                        else if(modelData.id === 400) Backend.personalization.showTooltips = delegate_value
                     }
                 }
             }
@@ -139,11 +132,7 @@ Page {
                     }
                     onDelegate_valueChanged: {
                         if(modelData.id === 300)
-                        {
-
-                            if(Backend.personalization.rootDirectory !== delegate_value) // this condition removes "Binding loop" <3
-                                Backend.personalization.rootDirectory = delegate_value
-                        }
+                            Backend.personalization.rootDirectory = delegate_value
                     }
                 }
             }
@@ -157,7 +146,8 @@ Page {
                             Backend.personalization.songExtensions
                     }
                     onDelegate_valueChanged: {
-
+                        if(modelData.id === 500)
+                            Backend.personalization.songExtensions = delegate_value
                     }
                 }
             }
@@ -171,7 +161,8 @@ Page {
                             Backend.personalization.songTransitionTimeMS
                     }
                     onDelegate_valueChanged: {
-
+                        if(modelData.id === 600)
+                            Backend.personalization.songTransitionTimeMS = delegate_value
                     }
                 }
             }

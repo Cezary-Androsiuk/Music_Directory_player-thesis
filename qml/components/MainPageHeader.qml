@@ -6,6 +6,8 @@ Item{
     id: pageHeader
     height: 40
 
+    property var rootDirectory: Backend.personalization.rootDirectory
+    property var directoryStructure: Backend.directoryStructure
 
     function refreshClicked(){
 
@@ -49,13 +51,13 @@ Item{
         DirComboBox{
             dltRootDirectory: {
                 // allways will contain "file://" prefix
-                var path = "" + Backend.personalization.rootDirectory;
+                var path = "" + rootDirectory;
                 path = path.replace("file:///", "");
                 path;
 
             }
 
-            dltModel: Backend.directoryStructure
+            dltModel: directoryStructure
         }
     }
 

@@ -10,22 +10,30 @@ Backend::Backend(QObject *parent)
 
     // on personalization's rootDirectory changed, change Backend's rootDirectory
     QObject::connect(
-        m_personalization, Personalization::rootDirectoryChanged,
+        m_personalization, &Personalization::rootDirectoryChanged,
         this, [this](){
             this->setRootDirectory(this->m_personalization->getRootDirectory());
         });
 
     // on personalization's songExtensions changed, change Backend's songExtensions
     QObject::connect(
-        m_personalization, Personalization::songExtensionsChanged,
+        m_personalization, &Personalization::songExtensionsChanged,
         this, [this](){
             this->setSongExtensions(m_personalization->getSongExtensions());
         });
 
+    // update Backend's personalizations if any thing in there changed
+    // QObject::connect(
+    //     m_personalization, &Personalization::rootDirectoryChanged,
+    //     this, &Backend::personalizationChanged);
+    // QObject::connect(
+    //     m_personalization, &Personalization::songExtensionsChanged,
+    //     this, &Backend::personalizationChanged);
+
     // on rootDirectory changed, change directoryStructure
     QObject::connect(
-        this, Backend::rootDirectoryChanged,
-        this, Backend::loadDirectoryStructure);
+        this, &Backend::rootDirectoryChanged,
+        this, &Backend::loadDirectoryStructure);
 
 }
 
@@ -109,6 +117,8 @@ void Backend::initializeDirectoryStructure()
 
 void Backend::loadDirectoryStructure()
 {
+    // called only after rootDirectory was changed
+
     DB << "loading new structure";
 
     // delete old structure
@@ -121,7 +131,7 @@ void Backend::loadDirectoryStructure()
     if(m_rootDirectory.isValid())
         createStructureDirectoryRecursive(m_rootDirectory.toLocalFile(), -1);
 
-    // empty string will be represented in qml for example as '-'
+    // empty string will be represented in qml for example as "---"
 
     emit this->directoryStructureChanged();
 }
@@ -170,32 +180,37 @@ Backend::QSongList Backend::getSongs() const
 
 void Backend::setRootDirectory(QUrl rootDirectory)
 {
-    DB << "new root directory in Backend:" << rootDirectory;
+    if(m_rootDirectory == rootDirectory) // removes binding loop in qml
+        return;
+
     m_rootDirectory = rootDirectory;
     emit this->rootDirectoryChanged();
 }
 
 void Backend::setSongExtensions(QString songExtensions)
 {
-    DB << "new song extensions in Backend:" << songExtensions;
+    if(m_songExtensions == songExtensions) // removes binding loop in qml
+        return;
+
     m_songExtensions = songExtensions;
     emit this->songExtensionsChanged();
 }
 
 void Backend::createStructureDirectoryRecursive(QString path, int depth)
 {
-    // remove / if is in the end (but while displayling better be there)
+    // remove / if is in the end
     if (!path.isEmpty() && path.endsWith("/"))
         path.chop(1);
 
     QDir directory(path);
 
+    // add directory to structure if is not a rootDirectory
     if(depth >= 0)
     {
         Directory *dir = new Directory(this);
         dir->setPath(directory.dirName() + "/");
         dir->setDepth(depth);
-        m_directoryStructure << dir;
+        m_directoryStructure.append(dir);
     }
 
     QStringList dirList = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);

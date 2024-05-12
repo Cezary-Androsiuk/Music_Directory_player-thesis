@@ -10,9 +10,6 @@ Item {
 
     property string delegate_text
     required property var delegate_value
-    onDelegate_valueChanged: {
-        console.log(" new delegate value: " + delegate_value)
-    }
 
     Text{
         anchors{

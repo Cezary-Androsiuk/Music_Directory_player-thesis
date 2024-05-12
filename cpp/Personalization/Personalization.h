@@ -17,7 +17,7 @@
 
 
 #define PERSONALIZATIONS_JSON_PATH "./assets/personalizations.json"
-#define PRINT_LOAD_AND_SAVE_VALUES true
+#define PRINT_LOAD_AND_SAVE_VALUES 0
 
 #define DEFAULT_NOTE "### Any change to the contents of this file, may lead to unexpected results ###"
 #define DEFAULT_IS_DARK_THEME true
