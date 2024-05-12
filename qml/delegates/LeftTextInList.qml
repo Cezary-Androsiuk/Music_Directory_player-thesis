@@ -3,43 +3,72 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 
 Item {
+    // can be used as extension for delegates where text is pinned to the left site and the longer ones can
+    //     go out from the right site
     id: leftTextInList
     anchors{
         top: parent.top
         left: parent.left
-        right: delegate_anchor_right
+        right: dltAnchorRight
         bottom: parent.bottom
     }
 
-    property string delegate_text: ""
-    property var delegate_anchor_right: null
-    property int delegate_right_margin: 10
+    property string dltText: ""
+    property int dltPixelSize: 15
+    required property var dltAnchorRight
+    property int dltRightMargin: 10
 
-    Text{
+    Item{
         anchors{
-            verticalCenter: parent.verticalCenter
-            left: parent.left
             leftMargin: 20
+            left: parent.left
+            top: parent.top
+            bottom: parent.bottom
             right: parent.right
-            rightMargin: delegate_right_margin
+            rightMargin: dltRightMargin
         }
-        text: delegate_text
-        color: root.color_accent1
-        font.pixelSize: 15
-        verticalAlignment: Text.AlignVCenter
-
-        // elide: Text.ElideRight
         clip: true
+        Text{
+            id: text
+            width: parent.width
+            height: parent.height
+            x: 0
+            y: 0
 
+            text: dltText
+            color: root.color_accent1
+            font.pixelSize: 15
+            verticalAlignment: Text.AlignVCenter
+        }
         MouseArea{
+            id: msArea
             anchors.fill: parent
-            hoverEnabled:  parent.contentWidth > parent.width
+            hoverEnabled:  true
 
             ToolTip{
-                visible: containsMouse
-                text: delegate_text
-                delay: 400
+                visible: parent.containsMouse && (text.contentWidth >= text.width)
+                text: dltText
+                delay: 1200
             }
         }
+        Rectangle{
+            id: endTextMask
+            anchors{
+                top: parent.top
+                bottom: parent.bottom
+                right: parent.right
+            }
+            width: parent.width * 0.1
+            visible: (text.contentWidth >= text.width)
+
+            gradient: Gradient{
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: "transparent" }
+                GradientStop { position: 1.0; color: root.color_background }
+            }
+        }
+
     }
+
+
 }

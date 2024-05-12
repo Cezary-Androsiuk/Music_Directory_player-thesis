@@ -1,4 +1,6 @@
 import QtQuick 2.15
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "qrc:/Music_directory_player/qml/delegates"
 
@@ -7,7 +9,17 @@ Item{
     height: 40
 
     property var rootDirectory: Backend.personalization.rootDirectory
-    property var directoryStructure: Backend.directoryStructure
+    property string localFileRootDirectory: {
+        if(rootDirectory === "")
+            "---";
+        else
+        {
+            var path = "" + rootDirectory;
+            path = path.replace("file:///", "");
+            path += "/";
+            path;
+        }
+    }
 
     function refreshClicked(){
 
@@ -48,17 +60,60 @@ Item{
             right: shuffleField.left
         }
 
-        DirComboBox{
-            dltRootDirectory: {
-                // allways will contain "file://" prefix
-                var path = "" + rootDirectory;
-                path = path.replace("file:///", "");
-                path;
-
+        Item{
+            anchors{
+                fill: parent
+                leftMargin: 10
+                rightMargin: 10
             }
+            clip: true
 
-            dltModel: directoryStructure
+            Text{
+                id: __text
+                width: parent.width
+                height: parent.height
+                x: {
+                    var offset = contentWidth - width + 5;
+                    if(offset < 0) offset = 0;
+                    -offset;
+                }
+                y: 0
+
+                text: localFileRootDirectory
+
+                color: root.color_element_idle
+                font.pixelSize: 14
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft
+            }
+            MouseArea{
+                anchors.fill: parent
+                hoverEnabled: true
+
+                ToolTip{
+                    visible: parent.containsMouse && (__text.contentWidth >= __text.width)
+                    text: localFileRootDirectory
+                    delay: 1200
+                }
+            }
+            Rectangle{
+                id: endTextMask
+                anchors{
+                    top: parent.top
+                    bottom: parent.bottom
+                    left: parent.left
+                }
+                width: parent.width * 0.1
+                visible: (__text.contentWidth >= __text.width)
+
+                gradient: Gradient{
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: root.color_background }
+                    GradientStop { position: 1.0; color: "transparent" }
+                }
+            }
         }
+
     }
 
     Item{

@@ -8,32 +8,29 @@ Backend::Backend(QObject *parent)
     // create value // to have default data for initialisation
     m_personalization = new Personalization(this);
 
+    // manually assign the initialised values (if personalization's default value is equal
+    //     to that which was readed from personalization.json then value won't be formally
+    //     changed and signal won't be emitted)
+    this->setRootDirectory(m_personalization->getRootDirectory());
+    this->setSongExtensions(m_personalization->getSongExtensions());
+
     // on personalization's rootDirectory changed, change Backend's rootDirectory
     QObject::connect(
-        m_personalization, &Personalization::rootDirectoryChanged,
-        this, [this](){
+        m_personalization, &Personalization::rootDirectoryChanged, this, [this](){
             this->setRootDirectory(this->m_personalization->getRootDirectory());
         });
 
     // on personalization's songExtensions changed, change Backend's songExtensions
     QObject::connect(
-        m_personalization, &Personalization::songExtensionsChanged,
-        this, [this](){
+        m_personalization, &Personalization::songExtensionsChanged, this, [this](){
             this->setSongExtensions(m_personalization->getSongExtensions());
         });
-
-    // update Backend's personalizations if any thing in there changed
-    // QObject::connect(
-    //     m_personalization, &Personalization::rootDirectoryChanged,
-    //     this, &Backend::personalizationChanged);
-    // QObject::connect(
-    //     m_personalization, &Personalization::songExtensionsChanged,
-    //     this, &Backend::personalizationChanged);
 
     // on rootDirectory changed, change directoryStructure
     QObject::connect(
         this, &Backend::rootDirectoryChanged,
-        this, &Backend::loadDirectoryStructure);
+        this, &Backend::loadSongs
+        );
 
 }
 
@@ -52,8 +49,6 @@ void Backend::initializeBackend()
         emit this->personalizationLoadError();
         return;
     }
-    emit this->personalizationChanged();
-
 
     emit this->backendInitialized();
 }
@@ -79,7 +74,6 @@ void Backend::reinitializePersonalization()
         emit this->personalizationLoadError();
         return;
     }
-    emit this->personalizationChanged();
 
     // at this point any error that can occur is personalization error (ex: file not found)
     // if this error was solved then just emit backendInitialized, but otherwise solution might be
@@ -91,7 +85,6 @@ void Backend::useDefaultPersonalization()
 {
     // use default data for personalizations
     m_personalization->setDefaultPersonalizationData();
-    emit this->personalizationChanged();
 
     // at this point any error that can occur is personalization error (ex: file not found)
     // if this error was solved then just emit backendInitialized, but otherwise solution might be
@@ -99,45 +92,9 @@ void Backend::useDefaultPersonalization()
     emit this->backendInitialized();
 }
 
-void Backend::initializeDirectoryStructure()
-{
-    if(m_rootDirectory.isValid())
-    {
-        if(QDir(m_rootDirectory.toString()).exists())
-        {
-
-        }
-        else
-            DB << "directory"<< m_rootDirectory <<"not exist";
-    }
-    else
-        DB << "directory"<< m_rootDirectory <<"is not valid!";
-}
-
-
-void Backend::loadDirectoryStructure()
-{
-    // called only after rootDirectory was changed
-
-    DB << "loading new structure";
-
-    // delete old structure
-    for(const auto &i: m_directoryStructure)
-        delete i;
-    m_directoryStructure.clear();
-
-
-    // root directory is path or an empty "" string
-    if(m_rootDirectory.isValid())
-        createStructureDirectoryRecursive(m_rootDirectory.toLocalFile(), -1);
-
-    // empty string will be represented in qml for example as "---"
-
-    emit this->directoryStructureChanged();
-}
-
 void Backend::loadSongs()
 {
+    // clear previous songs
     if(!m_songs.empty())
     {
         for(const auto &song : m_songs)
@@ -145,13 +102,35 @@ void Backend::loadSongs()
         m_songs.clear();
     }
 
-    for(int i=0; i<32; i++)
+    // Qt not provides recursive directory iterator, so i will use std::filesystem
+    // QDir rootDirectory(m_rootDirectory.toLocalFile());
+    std::filesystem::path rootDirectory(m_rootDirectory.toLocalFile().toStdString());
+    if(!std::filesystem::exists(rootDirectory))
     {
-        Song *song = new Song(this);
+        DB << "rootDirectory not exist! cannot load songs!";
+        emit this->songLoadError("rootDirectory not exist! cannot load songs!");
+        return;
+    }
 
-        song->setTitle(QString("SongSongSongSongSongSongSongSongSongSongSongSongSongSong %1").arg(i));
+    QStringList extensions = m_songExtensions.split(";", Qt::SplitBehavior::enum_type::SkipEmptyParts);
+    // for(auto &i : filters)
+    //     i.push_front("*."); // convert list of extensions to filter
+    // rootDirectory.setNameFilters(filters);
 
-        m_songs.append(song);
+    for(const auto &i : std::filesystem::recursive_directory_iterator(rootDirectory))
+    {
+        QFileInfo file(std::filesystem::path(i).string().c_str());
+
+        for(const auto &ext : extensions)
+        {
+            if(file.isFile() && file.suffix() == ext){
+                DB << "song: " << file.absoluteFilePath();
+                Song *song = new Song(this);
+                song->setTitle(file.fileName());
+                m_songs.append(song);
+                break;
+            }
+        }
     }
 
     DB << "songs loaded!";
@@ -166,11 +145,6 @@ Personalization *Backend::getPersonalization() const
 QUrl Backend::getRootDirectory() const
 {
     return m_rootDirectory;
-}
-
-Backend::QDirectoryList Backend::getDirectoryStructure() const
-{
-    return m_directoryStructure;
 }
 
 Backend::QSongList Backend::getSongs() const
@@ -195,28 +169,3 @@ void Backend::setSongExtensions(QString songExtensions)
     m_songExtensions = songExtensions;
     emit this->songExtensionsChanged();
 }
-
-void Backend::createStructureDirectoryRecursive(QString path, int depth)
-{
-    // remove / if is in the end
-    if (!path.isEmpty() && path.endsWith("/"))
-        path.chop(1);
-
-    QDir directory(path);
-
-    // add directory to structure if is not a rootDirectory
-    if(depth >= 0)
-    {
-        Directory *dir = new Directory(this);
-        dir->setPath(directory.dirName() + "/");
-        dir->setDepth(depth);
-        m_directoryStructure.append(dir);
-    }
-
-    QStringList dirList = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-    for(const auto &dir : dirList)
-        createStructureDirectoryRecursive(path + '/' + dir, depth+1);
-
-}
-

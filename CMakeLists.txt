@@ -19,14 +19,13 @@ qt_add_qml_module(appMusic_directory_player
     SOURCES cpp/Backend/Backend.h cpp/Backend/Backend.cpp
     SOURCES cpp/DebugPrint.h
     SOURCES cpp/Song/Song.h cpp/Song/Song.cpp
-    SOURCES cpp/SongList/SongList.h cpp/SongList/SongList.cpp
-    SOURCES cpp/Directory/Directory.h cpp/Directory/Directory.cpp
     SOURCES cpp/Personalization/Personalization.h cpp/Personalization/Personalization.cpp
+    SOURCES cpp/Player/Player.h cpp/Player/Player.cpp
+    SOURCES cpp/Playlist/Playlist.h cpp/Playlist/Playlist.cpp
 
     QML_FILES qml/Main.qml
 
     QML_FILES qml/components/LongSeparator.qml
-    QML_FILES qml/components/DirComboBox.qml
     QML_FILES qml/components/ScrollCurrentSongMarker.qml
     QML_FILES qml/components/MainPageHeader.qml
     QML_FILES qml/components/MainPageFooter.qml

@@ -10,7 +10,7 @@ Page {
     property var mdl: [
         {id: 100, name: "Theme", delegate_type: "switch"},
         {id: 200, name: "Accent Color", delegate_type: "color"},
-        {id: 300, name: "Root Path", delegate_type: "select path"},
+        {id: 300, name: "Songs Path", delegate_type: "select path"},
         {id: 400, name: "Show Tooltips", delegate_type: "switch"},
         {id: 500, name: "Songs Extenstions", delegate_type: "string"},
         {id: 600, name: "Song Transition Time", delegate_type: "integer"}
@@ -82,18 +82,18 @@ Page {
             Component {
                 id: switchComponent
                 SwitchField{
-                    delegate_text: {
+                    dltText: {
                         modelData.name
                     }
-                    delegate_value: {
+                    dltValue: {
                         if(false); // below lines are so beauty when equal <3
                         else if(modelData.id === 100) root.dark_theme
                         else if(modelData.id === 400) Backend.personalization.showTooltips
                     }
-                    onDelegate_valueChanged: {
+                    onDltValueChanged: {
                         if(false); // below lines are so beauty when equal <3
-                        else if(modelData.id === 100) Backend.personalization.isDarkTheme = delegate_value
-                        else if(modelData.id === 400) Backend.personalization.showTooltips = delegate_value
+                        else if(modelData.id === 100) Backend.personalization.isDarkTheme = dltValue
+                        else if(modelData.id === 400) Backend.personalization.showTooltips = dltValue
                     }
                 }
             }
@@ -101,21 +101,21 @@ Page {
             Component{
                 id: colorComponent
                 ColorSelectField{
-                    delegate_text: modelData.name
-                    delegate_color: {
+                    dltText: modelData.name
+                    dltColor: {
                         if(modelData.id === 200)
                             root.color_accent2 // is dynamically changed in Main.qml
                     }
                     onColorChoosed: {
                         // reacting on delegate_color changed wasn't update anything when user changed theme
-                        //      so I changes local vairalble "choosed_color" and emit signal colorChoosed
+                        //      so I changes local vairalble "dltChoosedColor" and emit signal colorChoosed
                         //      and thats wokrs and when isDarkTheme (that responds for a color_accent2)
                         //      is changed accent2 color is also changed
                         if(modelData.id === 200){
                             if(root.dark_theme)
-                                Backend.personalization.darkAccentColor = choosed_color
+                                Backend.personalization.darkAccentColor = dltChoosedColor
                             else
-                                Backend.personalization.lightAccentColor = choosed_color
+                                Backend.personalization.lightAccentColor = dltChoosedColor
                         }
                     }
                 }
@@ -124,15 +124,14 @@ Page {
             Component{
                 id: selectPathComponent
                 PathSelectField{
-                    delegate_text: modelData.name
-                    delegate_value: {
+                    dltText: modelData.name
+                    dltValue: {
                         if(modelData.id === 300)
                             Backend.personalization.rootDirectory
-                            // Backend.rootDirectory
                     }
-                    onDelegate_valueChanged: {
+                    onDltValueChanged: {
                         if(modelData.id === 300)
-                            Backend.personalization.rootDirectory = delegate_value
+                            Backend.personalization.rootDirectory = dltValue
                     }
                 }
             }
@@ -140,14 +139,14 @@ Page {
             Component{
                 id: stringComponent
                 StringField{
-                    delegate_text: modelData.name
-                    delegate_value: {
+                    dltText: modelData.name
+                    dltValue: {
                         if(modelData.id === 500)
                             Backend.personalization.songExtensions
                     }
-                    onDelegate_valueChanged: {
+                    onDltValueChanged: {
                         if(modelData.id === 500)
-                            Backend.personalization.songExtensions = delegate_value
+                            Backend.personalization.songExtensions = dltValue
                     }
                 }
             }
@@ -155,14 +154,14 @@ Page {
             Component{
                 id: integerComponent
                 IntegerField{
-                    delegate_text: modelData.name
-                    delegate_value: {
+                    dltText: modelData.name
+                    dltValue: {
                         if(modelData.id === 600)
                             Backend.personalization.songTransitionTimeMS
                     }
-                    onDelegate_valueChanged: {
+                    onDltValueChanged: {
                         if(modelData.id === 600)
-                            Backend.personalization.songTransitionTimeMS = delegate_value
+                            Backend.personalization.songTransitionTimeMS = dltValue
                     }
                 }
             }

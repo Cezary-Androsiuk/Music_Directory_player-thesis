@@ -6,33 +6,15 @@ Item{
     id: integerField
     anchors.fill: parent
 
-    property string delegate_text: ""
-    property var delegate_value: null
-    property bool delegate_enabled: true
+    property string dltText: ""
+    property var dltValue: null
+    property bool dltEnabled: true
 
-    Text{
-        anchors{
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: 20
-            right: textRightElement.left
-            rightMargin: 10
-        }
-        text: delegate_text
-        color: root.color_accent1
-        font.pixelSize: 15
-        verticalAlignment: Text.AlignVCenter
-
-        // elide: Text.ElideRight
-        clip: true
-
-        MouseArea{
-            anchors.fill: parent
-            hoverEnabled:  parent.contentWidth > parent.width
-
-            ToolTip.visible: containsMouse
-            ToolTip.text: delegate_text
-        }
+    LeftTextInList{
+        id: textElement
+        dltAnchorRight: textRightElement.left
+        dltRightMargin: 10
+        dltText: parent.dltText
     }
 
     Item{
@@ -50,18 +32,18 @@ Item{
             font.pixelSize: 15
             clip: true
 
-            enabled: delegate_enabled
+            enabled: dltEnabled
 
             validator: IntValidator{}
 
             Component.onCompleted: {
                 // init component
                 // this will be destroyed after scroll
-                text = delegate_value;
+                text = dltValue;
             }
 
             onEditingFinished: {
-                delegate_value = text;
+                dltValue = text;
             }
 
             ToolTip.visible: hovered && (width < (contentWidth * 1.3))

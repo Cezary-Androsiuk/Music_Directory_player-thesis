@@ -7,39 +7,20 @@ Item{
     id: colorSelectField
     anchors.fill: parent
 
-    property string delegate_text: ""
-    property var delegate_color: null
-
+    property string dltText: ""
+    property var dltColor: null
+    property var dltChoosedColor: null
     signal colorChoosed()
-    property var choosed_color: null
-    // reacting on delegate_color changed wasn't update when user changed theme
-    //      so I changes local vairalble "choosed_color" and emit signal colorChoosed
+    // reacting on dltColor changed wasn't update when user changed theme
+    //      so I changes local vairalble "dltChoosedColor" and emit signal colorChoosed
     //      and thats wokrs and when app_theme (that responds for a color_accent2)
     //      is changed accent2 color is also changed
 
-    Text{
+    LeftTextInList{
         id: textElement
-        anchors{
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: 20
-            right: textRightElement.left
-            rightMargin: 10
-        }
-        text: delegate_text
-        color: root.color_accent1
-        font.pixelSize: 15
-        verticalAlignment: Text.AlignVCenter
-
-        clip: true
-
-        MouseArea{
-            anchors.fill: parent
-            hoverEnabled:  parent.contentWidth > parent.width
-
-            ToolTip.visible: containsMouse
-            ToolTip.text: delegate_text
-        }
+        dltAnchorRight: textRightElement.left
+        dltRightMargin: 10
+        dltText: parent.dltText
     }
 
     Item{
@@ -63,7 +44,7 @@ Item{
             height: colorSelectField.height * 3/5
 
             border.color: {
-                delegate_color
+                dltColor
             }
             border.width: 2
 
@@ -99,8 +80,7 @@ Item{
             id: colorDialog
             title: "Please choose a color"
             onAccepted: {
-                // delegate_color = colorDialog.selectedColor
-                choosed_color = colorDialog.selectedColor
+                dltChoosedColor = colorDialog.selectedColor
                 colorChoosed()
             }
             onRejected: {

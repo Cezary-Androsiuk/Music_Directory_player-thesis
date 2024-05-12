@@ -6,33 +6,15 @@ Item{
     id: switchField
     anchors.fill: parent
 
-    property string delegate_text: ""
-    property bool delegate_value: false
-    property bool delegate_enabled: true
+    property string dltText: ""
+    property bool dltValue: false
+    property bool dltEnabled: true
 
-    Text{
+    LeftTextInList{
         id: textElement
-        anchors{
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: 20
-            // right: textRightElement.left
-            rightMargin: 10
-        }
-        text: delegate_text
-        color: root.color_accent1
-        font.pixelSize: 15
-        verticalAlignment: Text.AlignVCenter
-
-        clip: true
-
-        MouseArea{
-            anchors.fill: parent
-            hoverEnabled:  parent.contentWidth > parent.width
-
-            ToolTip.visible: containsMouse
-            ToolTip.text: delegate_text
-        }
+        dltAnchorRight: textRightElement.left
+        dltRightMargin: 10
+        dltText: parent.dltText
     }
 
     Item{
@@ -50,11 +32,11 @@ Item{
                 right: parent.right
                 rightMargin: 20
             }
-            enabled: delegate_enabled
-            checked: delegate_value
+            enabled: dltEnabled
+            checked: dltValue
 
             onCheckedChanged: {
-                delegate_value = checked
+                dltValue = checked
             }
         }
 

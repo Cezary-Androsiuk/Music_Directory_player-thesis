@@ -8,32 +8,14 @@ Item {
     id: pathSelectField
     anchors.fill: parent
 
-    property string delegate_text
-    required property var delegate_value
+    property string dltText
+    required property var dltValue
 
-    Text{
-        anchors{
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: 20
-            right: textRightElement.left
-            rightMargin: 10
-        }
-        text: delegate_text
-        color: root.color_accent1
-        font.pixelSize: 15
-        verticalAlignment: Text.AlignVCenter
-
-        // elide: Text.ElideRight
-        clip: true
-
-        MouseArea{
-            anchors.fill: parent
-            hoverEnabled:  parent.contentWidth > parent.width
-
-            ToolTip.visible: containsMouse
-            ToolTip.text: delegate_text
-        }
+    LeftTextInList{
+        id: textElement
+        dltAnchorRight: textRightElement.left
+        dltRightMargin: 15
+        dltText: parent.dltText
     }
 
     Item{
@@ -44,7 +26,7 @@ Item {
             right: parent.right
             rightMargin: 20
         }
-        width: parent.width * 0.4
+        width: height
 
         Item{
             id: folderDialogButton
@@ -52,14 +34,15 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
+                rightMargin: 10
             }
 
             // height: folderDialogText.height
-            width: height * 0.7
+            width: height //* 0.7
 
             FlatButton{
-                dltDescription: "Select " + delegate_text
-                dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
+                dltDescription: "Select " + dltText
+                dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")//Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
                 dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")
                 onUserClicked: {
                     folderDialog.open()
@@ -72,9 +55,9 @@ Item {
             title: "Select a Path"
             options: FolderDialog.ShowDirsOnly
 
-            currentFolder: delegate_value
+            currentFolder: dltValue
 
-            onAccepted:  delegate_value = folderDialog.selectedFolder;
+            onAccepted:  dltValue = folderDialog.selectedFolder;
             onRejected: folderDialog.close()
         }
 

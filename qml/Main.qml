@@ -154,7 +154,7 @@ ApplicationWindow {
 
     property color color_accent1: dark_theme ? _color_dark_accent1 : _color_light_accent1
     property color color_accent2: dark_theme ? _color_dark_accent2 : _color_light_accent2
-    // property color color_background: dark_theme ? rgb(28,27,31) : rgb(255,251,254)
+    property color color_background: dark_theme ? rgb(28,27,31) : rgb(255,251,254)
     property color color_element_idle: dark_theme ? rgb(200, 200, 200) : rgb(50, 50, 50)
     property color color_element_hover: dark_theme ? rgb(140, 140, 140) : rgb(110, 110, 110)
     property color color_element_press: color_accent2

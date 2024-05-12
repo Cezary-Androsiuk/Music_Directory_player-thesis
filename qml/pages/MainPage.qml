@@ -13,6 +13,13 @@ Page {
     property int itemIndex: 1
     property int itemCount: Backend.songs.length
 
+    Connections{
+        target: Backend
+        function onSongLoadError(desc){
+            console.log("open popup, song load failed: " + desc)
+        }
+    }
+
     header: MainPageHeader{}
 
     ScrollView{
