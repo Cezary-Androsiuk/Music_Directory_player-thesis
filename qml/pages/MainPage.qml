@@ -11,7 +11,7 @@ Page {
     property int delegateWidth: width
 
     property int itemIndex: 1
-    property int itemCount: Backend.songs.length
+    property int itemCount: Backend.playlist.songs.length
 
     Connections{
         target: Backend
@@ -27,7 +27,7 @@ Page {
         anchors.fill: parent
         visible: Backend.personalization.rootDirectory !== ""
         ListView{
-            model: Backend.songs
+            model: Backend.playlist.songs
             boundsBehavior: Flickable.StopAtBounds
             clip: true
             delegate: Item{

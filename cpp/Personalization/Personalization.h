@@ -10,9 +10,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include <functional>
-
-#include "cpp/DebugPrint.h"
+#include <cpp/DebugPrint.h>
 
 
 
@@ -28,6 +26,8 @@
 #define DEFAULT_SHOW_TOOLTIPS true
 #define DEFAULT_SONG_EXTENSIONS "mp4;mkv;mp3;mov;wav"
 #define DEFAULT_SONG_TRANSITION_TIME_MS 300
+#define DEFAULT_LOAD_PROTECTOR 10'000
+#define DEFAULT_SHOW_REFRESH_LIST_BUTTON true
 
 
 #define CHECK_KEY(arg) if(jp.contains(key)) arg;\
@@ -37,14 +37,15 @@ class Personalization : public QObject
 {
     Q_OBJECT
     // frontend app personalisation accessors
-    Q_PROPERTY(bool isDarkTheme                 READ getIsDarkTheme             WRITE setIsDarkTheme            NOTIFY isDarkThemeChanged)
-    Q_PROPERTY(QColor darkAccentColor           READ getDarkAccentColor         WRITE setDarkAccentColor        NOTIFY darkAccentColorChanged)
-    Q_PROPERTY(QColor lightAccentColor          READ getLightAccentColor        WRITE setLightAccentColor       NOTIFY lightAccentColorChanged)
-    Q_PROPERTY(QUrl rootDirectory               READ getRootDirectory           WRITE setRootDirectory          NOTIFY rootDirectoryChanged)
-    Q_PROPERTY(bool showTooltips                READ getShowTooltips            WRITE setShowTooltips           NOTIFY showTooltipsChanged)
-    Q_PROPERTY(QString songExtensions           READ getSongExtensions          WRITE setSongExtensions         NOTIFY songExtensionsChanged)
-    Q_PROPERTY(int songTransitionTimeMS         READ getSongTransitionTimeMS    WRITE setSongTransitionTimeMS   NOTIFY songTransitionTimeMSChanged)
-
+    Q_PROPERTY(bool isDarkTheme                 READ getIsDarkTheme             WRITE setIsDarkTheme            NOTIFY isDarkThemeChanged           FINAL)
+    Q_PROPERTY(QColor darkAccentColor           READ getDarkAccentColor         WRITE setDarkAccentColor        NOTIFY darkAccentColorChanged       FINAL)
+    Q_PROPERTY(QColor lightAccentColor          READ getLightAccentColor        WRITE setLightAccentColor       NOTIFY lightAccentColorChanged      FINAL)
+    Q_PROPERTY(QUrl rootDirectory               READ getRootDirectory           WRITE setRootDirectory          NOTIFY rootDirectoryChanged         FINAL)
+    Q_PROPERTY(bool showTooltips                READ getShowTooltips            WRITE setShowTooltips           NOTIFY showTooltipsChanged          FINAL)
+    Q_PROPERTY(QString songExtensions           READ getSongExtensions          WRITE setSongExtensions         NOTIFY songExtensionsChanged        FINAL)
+    Q_PROPERTY(int songTransitionTimeMS         READ getSongTransitionTimeMS    WRITE setSongTransitionTimeMS   NOTIFY songTransitionTimeMSChanged  FINAL)
+    Q_PROPERTY(int loadProtector                READ getLoadProtector           WRITE setLoadProtector          NOTIFY loadProtectorChanged         FINAL)
+    Q_PROPERTY(bool showRefreshListButton       READ getShowRefreshListButton   WRITE setShowRefreshListButton  NOTIFY showRefreshListButtonChanged FINAL)
 
 public:
     explicit Personalization(QObject *parent = nullptr);
@@ -65,6 +66,8 @@ public:
     bool getShowTooltips() const;
     QString getSongExtensions() const;
     int getSongTransitionTimeMS() const;
+    int getLoadProtector() const;
+    bool getShowRefreshListButton() const;
 
     void setIsDarkTheme(bool isDarkTheme);
     void setDarkAccentColor(const QColor &accentColor);
@@ -73,6 +76,8 @@ public:
     void setShowTooltips(bool showTooltips);
     void setSongExtensions(const QString &songExtensions);
     void setSongTransitionTimeMS(int songTransitionTimeMS);
+    void setLoadProtector(int loadProtector);
+    void setShowRefreshListButton(bool showRefreshListButton);
 
 signals:
     void isDarkThemeChanged();
@@ -82,6 +87,8 @@ signals:
     void showTooltipsChanged();
     void songExtensionsChanged();
     void songTransitionTimeMSChanged();
+    void loadProtectorChanged();
+    void showRefreshListButtonChanged();
 
 private:
     bool m_isDarkTheme;
@@ -91,6 +98,8 @@ private:
     bool m_showTooltips;
     QString m_songExtensions;
     int m_songTransitionTimeMS; // MS stands for miliseconds (1000ms = 1s)
+    int m_loadProtector;
+    bool m_showRefreshListButton;
 };
 
 #endif // PERSONALIZATION_H

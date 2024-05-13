@@ -20,17 +20,18 @@ Item{
             path;
         }
     }
+    property bool showRefreshListButton: Backend.personalization.showRefreshListButton
 
     function refreshClicked(){
-
+        Backend.rootDirectoryChanged()
     }
 
     function shuffleClicked(){
-
+        Backend.playlist.shufflePlaylistSongs();
     }
 
     function settingsClicked(){
-        mainStackView.push(Qt.resolvedUrl("qrc:/Music_directory_player/qml/pages/Settings.qml"))
+        mainStackView.push(Qt.resolvedUrl("qrc:/Music_directory_player/qml/pages/Settings.qml"));
     }
 
 
@@ -42,6 +43,8 @@ Item{
             bottom: parent.bottom
         }
         width: height
+
+        visible: showRefreshListButton
 
         FlatButton{
             dltDescription: "Refresh List"
@@ -56,7 +59,13 @@ Item{
         anchors{
             top: parent.top
             bottom: parent.bottom
-            left: refreshField.right
+            left: {
+                if(showRefreshListButton)
+                    refreshField.right
+                else
+                    parent.left
+            }
+
             right: shuffleField.left
         }
 

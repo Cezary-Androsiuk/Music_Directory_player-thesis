@@ -8,7 +8,9 @@ Personalization::Personalization(QObject *parent)
     m_rootDirectory(DEFAULT_ROOT_DIRECTORY),
     m_showTooltips(DEFAULT_SHOW_TOOLTIPS),
     m_songExtensions(DEFAULT_SONG_EXTENSIONS),
-    m_songTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS)
+    m_songTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS),
+    m_loadProtector(DEFAULT_LOAD_PROTECTOR),
+    m_showRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON)
 {
     // WR << "REMOVING PERSONALIZATIONS";
     // QFile::remove(PERSONALIZATIONS_JSON_PATH);
@@ -29,6 +31,8 @@ void Personalization::printValues() const
     DB << "\tshowTooltips: " << m_showTooltips;
     DB << "\tsongExtensions: " << m_songExtensions;
     DB << "\tsongTransitionTimeMS: " << m_songTransitionTimeMS;
+    DB << "\tloadProtector: " << m_loadProtector;
+    DB << "\tshowRefreshListButton: " << m_showRefreshListButton;
 #endif
 }
 
@@ -43,6 +47,8 @@ void Personalization::setDefaultPersonalizationData()
     this->setShowTooltips(DEFAULT_SHOW_TOOLTIPS);
     this->setSongExtensions(DEFAULT_SONG_EXTENSIONS);
     this->setSongTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS);
+    this->setLoadProtector(DEFAULT_LOAD_PROTECTOR);
+    this->setShowRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON);
 }
 
 int Personalization::loadPersonalizationFromJson()
@@ -103,6 +109,12 @@ int Personalization::loadPersonalizationFromJson()
     key = "song transition time (ms)";
     CHECK_KEY(this->setSongTransitionTimeMS(jp[key].toInt()))
 
+    key = "load protector";
+    CHECK_KEY(this->setLoadProtector(jp[key].toInt()))
+
+    key = "show refresh list button";
+    CHECK_KEY(this->setShowRefreshListButton(jp[key].toBool()))
+
 
     DB << "personalization data readed!";
     this->printValues();
@@ -143,6 +155,8 @@ int Personalization::savePersonalizationToJson()
     json_object["show tooltips"] = this->getShowTooltips();
     json_object["song extensions"] = this->getSongExtensions();
     json_object["song transition time (ms)"] = this->getSongTransitionTimeMS();
+    json_object["load protector"] = this->getLoadProtector();
+    json_object["show refresh list button"] = this->getShowRefreshListButton();
 
     QJsonDocument json_data(json_object);
 
@@ -193,6 +207,16 @@ QString Personalization::getSongExtensions() const
 int Personalization::getSongTransitionTimeMS() const
 {
     return m_songTransitionTimeMS;
+}
+
+int Personalization::getLoadProtector() const
+{
+    return m_loadProtector;
+}
+
+bool Personalization::getShowRefreshListButton() const
+{
+    return m_showRefreshListButton;
 }
 
 
@@ -256,10 +280,32 @@ void Personalization::setSongTransitionTimeMS(int songTransitionTimeMS)
         return;
 
     if(songTransitionTimeMS < 0){
-        WR << "Trying to set negative time!";
+        WR << "Trying to set negative time in songTransitionTime!";
         songTransitionTimeMS = 0;
     }
     m_songTransitionTimeMS = songTransitionTimeMS;
     emit this->songTransitionTimeMSChanged();
+}
+
+void Personalization::setLoadProtector(int loadProtector)
+{
+    if(m_loadProtector == loadProtector) // removes binding loop in qml
+        return;
+
+    if(loadProtector < 0){
+        WR << "Trying to set negative count in loadProtector!";
+        loadProtector = 0;
+    }
+    m_loadProtector = loadProtector;
+    emit this->loadProtectorChanged();
+}
+
+void Personalization::setShowRefreshListButton(bool showRefreshListButton)
+{
+    if(m_showRefreshListButton == showRefreshListButton) // removes binding loop in qml
+        return;
+
+    m_showRefreshListButton = showRefreshListButton;
+    emit this->showRefreshListButtonChanged();
 }
 

@@ -13,7 +13,9 @@ Page {
         {id: 300, name: "Songs Path", delegate_type: "select path"},
         {id: 400, name: "Show Tooltips", delegate_type: "switch"},
         {id: 500, name: "Songs Extenstions", delegate_type: "string"},
-        {id: 600, name: "Song Transition Time", delegate_type: "integer"}
+        {id: 600, name: "Song Transition Time", delegate_type: "integer"},
+        {id: 700, name: "Load Protector", delegate_type: "integer"},
+        {id: 800, name: "Show Refresh List Button", delegate_type: "switch"}
     ]
     property int delegateHeight: 60
     property int delegateWidth: width
@@ -89,11 +91,13 @@ Page {
                         if(false); // below lines are so beauty when equal <3
                         else if(modelData.id === 100) root.dark_theme
                         else if(modelData.id === 400) Backend.personalization.showTooltips
+                        else if(modelData.id === 800) Backend.personalization.showRefreshListButton
                     }
                     onDltValueChanged: {
                         if(false); // below lines are so beauty when equal <3
                         else if(modelData.id === 100) Backend.personalization.isDarkTheme = dltValue
                         else if(modelData.id === 400) Backend.personalization.showTooltips = dltValue
+                        else if(modelData.id === 800) Backend.personalization.showRefreshListButton = dltValue
                     }
                 }
             }
@@ -156,12 +160,16 @@ Page {
                 IntegerField{
                     dltText: modelData.name
                     dltValue: {
-                        if(modelData.id === 600)
-                            Backend.personalization.songTransitionTimeMS
+                        if(false); // below lines are so beauty when equal <3
+                        else if(modelData.id === 600) Backend.personalization.songTransitionTimeMS
+                        else if(modelData.id === 700) Backend.personalization.loadProtector
+
                     }
                     onDltValueChanged: {
-                        if(modelData.id === 600)
-                            Backend.personalization.songTransitionTimeMS = dltValue
+                        if(false); // below lines are so beauty when equal <3
+                        else if(modelData.id === 600) Backend.personalization.songTransitionTimeMS = dltValue
+                        else if(modelData.id === 700) Backend.personalization.loadProtector = dltValue
+
                     }
                 }
             }

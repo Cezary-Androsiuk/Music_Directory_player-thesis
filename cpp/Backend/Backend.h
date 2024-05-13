@@ -15,6 +15,7 @@
 #include <cpp/DebugPrint.h>
 #include <cpp/Song/Song.h>
 #include <cpp/Personalization/Personalization.h>
+#include <cpp/Playlist/Playlist.h>
 
 
 /*
@@ -30,11 +31,11 @@
 
 class Backend : public QObject
 {
-    typedef QList<Song *> QSongList;
+    typedef QList<Song *> SongList;
 
     Q_OBJECT
-    Q_PROPERTY(Personalization *personalization     READ getPersonalization                                 NOTIFY personalizationChanged       FINAL)
-    Q_PROPERTY(QSongList songs                      READ getSongs                                           NOTIFY songsChanged                 FINAL)
+    Q_PROPERTY(Personalization *personalization READ getPersonalization NOTIFY personalizationChanged   FINAL)
+    Q_PROPERTY(Playlist *playlist               READ getPlaylist        NOTIFY playlistChanged          FINAL)
 
 public:
     explicit Backend(QObject *parent = nullptr);
@@ -52,8 +53,8 @@ public slots:
 
 public: // getters
     Personalization *getPersonalization() const;
+    Playlist *getPlaylist() const;
     QUrl getRootDirectory() const;
-    QSongList getSongs() const;
     QString getSongExtensions() const;
 
 public: // setters
@@ -66,15 +67,18 @@ signals: // something happend
     void songLoadError(QString desc);
 
 signals: // some variable changed
-    void personalizationChanged();
+    void personalizationChanged(); // never emited
+    void playlistChanged(); // never emited
+
     void rootDirectoryChanged();
-    void songsChanged();
+    void songsChanged(SongList songs);
     void songExtensionsChanged();
 
 private:
     Personalization *m_personalization;
+    Playlist *m_playlist;
+
     QUrl m_rootDirectory; // stores root path where all songs are located (also in subfolders)
-    QSongList m_songs; // stores what songs are in playlist // QStringList m_directoryStructureSongs; // maybe better name
     QString m_songExtensions;
 };
 

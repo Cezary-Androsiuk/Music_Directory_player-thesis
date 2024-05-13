@@ -32,6 +32,13 @@ Backend::Backend(QObject *parent)
         this, &Backend::loadSongs
         );
 
+    m_playlist = new Playlist(this);
+
+    QObject::connect(
+        this, &Backend::songsChanged,
+        m_playlist, &Playlist::loadPlaylistSongs
+        );
+
 }
 
 Backend::~Backend()
@@ -94,14 +101,6 @@ void Backend::useDefaultPersonalization()
 
 void Backend::loadSongs()
 {
-    // clear previous songs
-    if(!m_songs.empty())
-    {
-        for(const auto &song : m_songs)
-            delete song;
-        m_songs.clear();
-    }
-
     // Qt not provides recursive directory iterator, so i will use std::filesystem
     // QDir rootDirectory(m_rootDirectory.toLocalFile());
     std::filesystem::path rootDirectory(m_rootDirectory.toLocalFile().toStdString());
@@ -117,6 +116,8 @@ void Backend::loadSongs()
     //     i.push_front("*."); // convert list of extensions to filter
     // rootDirectory.setNameFilters(filters);
 
+    SongList songs;
+
     for(const auto &i : std::filesystem::recursive_directory_iterator(rootDirectory))
     {
         QFileInfo file(std::filesystem::path(i).string().c_str());
@@ -127,14 +128,14 @@ void Backend::loadSongs()
                 DB << "song: " << file.absoluteFilePath();
                 Song *song = new Song(this);
                 song->setTitle(file.fileName());
-                m_songs.append(song);
+                songs.append(song);
                 break;
             }
         }
     }
 
     DB << "songs loaded!";
-    emit this->songsChanged();
+    emit this->songsChanged(songs);
 }
 
 Personalization *Backend::getPersonalization() const
@@ -142,14 +143,14 @@ Personalization *Backend::getPersonalization() const
     return m_personalization;
 }
 
+Playlist *Backend::getPlaylist() const
+{
+    return m_playlist;
+}
+
 QUrl Backend::getRootDirectory() const
 {
     return m_rootDirectory;
-}
-
-Backend::QSongList Backend::getSongs() const
-{
-    return m_songs;
 }
 
 void Backend::setRootDirectory(QUrl rootDirectory)
