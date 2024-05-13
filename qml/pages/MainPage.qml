@@ -18,6 +18,10 @@ Page {
         function onSongLoadError(desc){
             console.log("open popup, song load failed: " + desc)
         }
+
+        function onLoadProtectorLimited(limit){
+            console.log("open popup, limit: " + limit)
+        }
     }
 
     header: MainPageHeader{}

@@ -11,6 +11,8 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QStandardPaths>
+#include <QtMultimedia/QMediaPlayer> // load song data
+#include <QtMultimedia/QMediaMetaData> // load song data
 
 #include <cpp/DebugPrint.h>
 #include <cpp/Song/Song.h>
@@ -65,6 +67,7 @@ signals: // something happend
     void backendInitialized();
     void personalizationLoadError();
     void songLoadError(QString desc);
+    void loadProtectorLimited(int limit);
 
 signals: // some variable changed
     void personalizationChanged(); // never emited
@@ -73,6 +76,9 @@ signals: // some variable changed
     void rootDirectoryChanged();
     void songsChanged(SongList songs);
     void songExtensionsChanged();
+
+private:
+    Song *createSong(QFileInfo &file, Song *song);
 
 private:
     Personalization *m_personalization;

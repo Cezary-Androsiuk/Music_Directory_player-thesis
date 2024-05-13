@@ -118,19 +118,92 @@ void Backend::loadSongs()
 
     SongList songs;
 
+    int files = 0;
+    int filesMax = m_personalization->getLoadProtector();
+
+
+
+
+
+
+
+    // get song duration
+    QMediaPlayer mp;
+
+    /// wait for the event (load media)
+    QEventLoop loop;
+    connect(&mp, &QMediaPlayer::mediaStatusChanged, &loop, &QEventLoop::quit);
+    mp.setSource(song_path);
+    loop.exec();
+    if(mp.mediaStatus() != QMediaPlayer::LoadedMedia){
+        WR << "error while loading song: " << mp.errorString();
+        return;
+    }
+
+    QString songTitle(mp.metaData().value(QMediaMetaData::Title).toString());
+    if(songTitle.isEmpty()) // title in metadata was not found
+    {
+        WR << "song file doesn't contains Title metadata, setting file name as the Title";
+    }
+    else // title can be taken from metadata
+    {
+
+    }
+
+
+
+    if(lambda_get_value_by_id(2 /*Title field id*/).toString() == ""){
+        if(song_title == ""){
+            WR << "song file doesn't contains Title metadata, setting file name as the Title";
+            song_title = QFileInfo(song_path).baseName();
+        }
+        DB << "setting own title to" << song_title;
+        int index = lambda_get_map_index_by_id(2/*Title field id*/);
+        if(index == -1) // Title not exist
+        {
+            WR << "error, Title field not found!";
+            emit this->signalAddSongError("error, Title field not found!");
+            return;
+        }
+        else // Title field found
+        {
+            auto map = new_song_data[index].toMap();
+            map["value"] = song_title;
+            // this way because new_song_data[0].toMap() returns constant map
+            new_song_data[index] = map;
+        }
+    }
+    auto duration = QString::number(mp.duration());
+
+
+
+
+
+
+
+
+
     for(const auto &i : std::filesystem::recursive_directory_iterator(rootDirectory))
     {
         QFileInfo file(std::filesystem::path(i).string().c_str());
 
+        // check if match one of the extensions
         for(const auto &ext : extensions)
         {
             if(file.isFile() && file.suffix() == ext){
                 DB << "song: " << file.absoluteFilePath();
                 Song *song = new Song(this);
-                song->setTitle(file.fileName());
-                songs.append(song);
+
+                songs.append(createSong());
                 break;
             }
+        }
+
+        ++files;
+        if(files > filesMax)
+        {
+            emit this->loadProtectorLimited(files);
+            break;
         }
     }
 
@@ -169,4 +242,10 @@ void Backend::setSongExtensions(QString songExtensions)
 
     m_songExtensions = songExtensions;
     emit this->songExtensionsChanged();
+}
+
+Song *Backend::createSong(QFileInfo &file, Song *song)
+{
+    song->setTitle(file.fileName());
+    return song;
 }
