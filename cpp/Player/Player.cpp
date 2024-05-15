@@ -12,13 +12,34 @@ Player::Player(QObject *parent)
 void Player::initialize()
 {
     DB << "player start initialize";
-    emit this->askForSongByPosition(0);
-    emit this->askForSongByPosition(1, false);
+    // current song should be nullptr
+    emit this->askForSongByPosition(0, false);
+}
+
+void Player::clearPlayer()
+{
+    m_playerQueue->clearQueue();
+
+    m_currentSong = nullptr; // element was borrowed not created
+    m_nextSong = nullptr; // element was borrowed not created
 }
 
 void Player::playOtherNextSongByID(int songID)
 {
     emit this->askForSongByID(songID, false);
+}
+
+void Player::play()
+{
+    if(m_currentSong == nullptr)
+    {
+
+    }
+}
+
+void Player::pause()
+{
+
 }
 
 Song *Player::getCurrentSong() const
@@ -38,6 +59,7 @@ Song *Player::getNextSong() const
 
 void Player::setCurrentSong(Song *song)
 {
+
     DB << "changing current song from" << m_currentSong << "to" << song;
     DB << song->getID() << " " << song->getListIndex() << " " << song->getTitle();
     // song is just a borrowed from Playlist (and will be deleted there)
@@ -52,4 +74,10 @@ void Player::setNextSong(Song *song)
     // song is just a borrowed from Playlist (and will be deleted there)
     m_nextSong = song;
     emit this->nextSongChanged();
+}
+
+void Player::switchSongs()
+{
+    m_currentSong = m_nextSong;
+
 }

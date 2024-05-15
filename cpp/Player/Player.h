@@ -20,8 +20,14 @@ public:
 
 public slots:
     void initialize(); /// triggered by Playlist::playlistInitialized()
+    void clearPlayer();
+
 
     void playOtherNextSongByID(int songID); /// triggered by qml when user select other next song
+
+public slots: /// bottom player actions
+    void play();
+    void pause();
 
 public:
     Song *getCurrentSong() const;
@@ -40,6 +46,9 @@ signals:
     void askForSongByPosition(int position, bool forCurrentSongPurpose = true);
     void askForSongByID(int id, bool forCurrentSongPurpose = true);
     void askForNextSongByCurrentSongID(int currentSongID);
+
+private:
+    void switchSongs();
 
 private:
     Song *m_currentSong;

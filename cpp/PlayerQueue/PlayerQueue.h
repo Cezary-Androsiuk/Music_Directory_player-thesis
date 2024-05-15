@@ -24,6 +24,7 @@ public:
 
     void popCurrent();
     void pushNext(QMediaPlayer *song);
+    void clearQueue();
 
 signals:
     void currentSongChanged();

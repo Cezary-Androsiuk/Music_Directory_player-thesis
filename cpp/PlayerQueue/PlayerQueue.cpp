@@ -85,6 +85,12 @@ void PlayerQueue::pushNext(QMediaPlayer *song)
 
 }
 
+void PlayerQueue::clearQueue()
+{
+    while(this->isCurrentSongSet())
+        this->popCurrent();
+}
+
 void PlayerQueue::pushCaseXX(QMediaPlayer *song){
     // starts with [x][y]
     this->popCurrent();
