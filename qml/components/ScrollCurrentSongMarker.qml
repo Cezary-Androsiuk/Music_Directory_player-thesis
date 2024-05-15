@@ -2,9 +2,13 @@ import QtQuick 2.15
 
 Item{
     id: currentSongMarker
-    required property bool dltDisplay
-    property int dltSongIndex: 0
+    required property bool dltVisible
+    property int dltSongIndex: -1
     property int dltSongsCount: 0
+
+    onDltSongsCountChanged: {
+        console.log("changed songs count to: " + dltSongsCount)
+    }
 
 
     anchors{
@@ -14,7 +18,8 @@ Item{
     }
     width: 8
 
-    visible: dltDisplay
+    visible: dltVisible && (dltSongIndex !== -1)
+    clip: true
 
     Rectangle{
         anchors{

@@ -12,24 +12,26 @@
 class Player : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Song *currentSong READ getCurrentSong NOTIFY currentSongChanged FINAL)
-    Q_PROPERTY(Song *nextSong READ getNextSong NOTIFY nextSongChanged FINAL)
+    Q_PROPERTY(Song *currentSong                    READ getCurrentSong     NOTIFY currentSongChanged   FINAL)
+    Q_PROPERTY(Song *nextSong                       READ getNextSong        NOTIFY nextSongChanged      FINAL)
+    // Q_PROPERTY(const PlayerQueue &playerQueue       READ getPlayerQueue     CONSTANT                    FINAL)
 public:
     explicit Player(QObject *parent = nullptr);
 
 public slots:
-    void updateCurrentSong(Song *song);
-    void updateNextSong(Song *song);
+    void initialize(); /// triggered by Playlist::playlistInitialized()
 
-    void playSongByID(int songID); // used by qml when player press play on any song in list
+    void playOtherNextSongByID(int songID); /// triggered by qml when user select other next song
 
 public:
-
     Song *getCurrentSong() const;
     Song *getNextSong() const;
 
-    void setCurrentSong(Song *song);
-    void setNextSong(Song *song);
+    // const PlayerQueue &getPlayerQueue() const;
+
+public slots:
+    void setCurrentSong(Song *song); /// triggered by signal Playlist::newCurrentSongLoaded
+    void setNextSong(Song *song); /// triggered by signal Playlist::newNextSongLoaded
 
 signals:
     void currentSongChanged();
@@ -43,7 +45,7 @@ private:
     Song *m_currentSong;
     Song *m_nextSong;
 
-    PlayerQueue playerQueue;
+    PlayerQueue *m_playerQueue;
 };
 
 #endif // PLAYER_H

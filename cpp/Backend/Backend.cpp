@@ -47,6 +47,9 @@ void Backend::initializeConnections()
     /// on songs loaded, pass them to playlist
     QObject::connect(this, &Backend::songsChanged, m_playlist, &Playlist::loadPlaylistSongs);
 
+    /// after the first loading of songs in playlist, start player to initialize with default songs (0 and 1)
+    QObject::connect(m_playlist, &Playlist::playlistInitialized, m_player, &Player::initialize);
+
     /// on ask for Song by player, load song in playlist
     QObject::connect(m_player, &Player::askForSongByPosition,           m_playlist, &Playlist::loadSongByPosition);
     QObject::connect(m_player, &Player::askForSongByID,                 m_playlist, &Playlist::loadSongByID);
@@ -55,6 +58,7 @@ void Backend::initializeConnections()
     /// on song loaded by playlist, pass it to player
     QObject::connect(m_playlist, &Playlist::newCurrentSongLoaded,   m_player, &Player::setCurrentSong);
     QObject::connect(m_playlist, &Playlist::newNextSongLoaded,      m_player, &Player::setNextSong);
+
 }
 
 

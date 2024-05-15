@@ -25,10 +25,19 @@ Page {
     // }
     // property int songsCount: Backend.playlist.songs.length
 
-    property int currentSongIndex: 2
-    property int nextSongIndex: 3
-    property int songsCount: 20
+    property int currentSongIndex: Backend.player.currentSong.listIndex
+    property int nextSongIndex: Backend.player.nextSong.listIndex
 
+    Connections{
+        target: Backend.player
+        function onCurrentSongChanged(){
+            console.log("current song changed -> " + currentSongIndex)
+        }
+        function onNextSongChanged(){
+            console.log("next song changed -> " + nextSongIndex)
+        }
+
+    }
     Item{
         Component.onCompleted: {
             // on start load all songs
@@ -97,44 +106,95 @@ Page {
             boundsBehavior: Flickable.StopAtBounds
             clip: true
 
-            delegate: Item{
+            delegate: Loader{
                 width: delegateWidth - 15 /*scrollbar offset*/
                 height: delegateHeight
 
-                Rectangle{
-                    color: "blue"
-                    width: 10
-                    height: 20
-                    visible: index === nextSongIndex
-                }
-                Rectangle{
-                    color: "red"
-                    width: 10
-                    height: 10
-                    visible: index === currentSongIndex
+                sourceComponent: {
+                    if(modelData.listIndex === currentSongIndex)    currentSongComponent
+                    else if(modelData.listIndex === nextSongIndex)     nextSongComponent
+                    else                                                   songComponent
                 }
 
-                ListButtonField{
-                    delegate_text: modelData.title
-                    onUserClickedElement: {
-                        // just_used_id = + modelData.id;
-                        // just_used_title = modelData.title;
-
-                        // backend.database.loadEditPlaylistSongModel(+modelData.id)
-                    }
-                    onUserClickedPlay: {
-                        // console.log("play: " + modelData.title)
+                Component{
+                    id: currentSongComponent // highlight
+                    Item{
+                        ListButtonField{
+                            delegate_text: modelData.title
+                            onUserClickedElement: {
+                                // just_used_id = + modelData.id;
+                                // just_used_title = modelData.title;
+                                console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
+                                // backend.database.loadEditPlaylistSongModel(+modelData.id)
+                            }
+                            onUserClickedPlay: {
+                                // console.log("play: " + modelData.title)
+                            }
+                        }
+                        Rectangle{
+                            anchors.fill: parent
+                            color: root.color_accent2
+                            opacity: 0.7
+                        }
                     }
                 }
+
+                Component{
+                    id: nextSongComponent // highlight
+                    Item{
+                        ListButtonField{
+                            delegate_text: modelData.title
+                            onUserClickedElement: {
+                                // just_used_id = + modelData.id;
+                                // just_used_title = modelData.title;
+                                console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
+                                // backend.database.loadEditPlaylistSongModel(+modelData.id)
+                            }
+                            onUserClickedPlay: {
+                                // console.log("play: " + modelData.title)
+                            }
+                        }
+                        Rectangle{
+                            anchors.fill: parent
+                            color: root.color_accent2
+                            opacity: 0.3
+                        }
+                    }
+                }
+
+                Component{
+                    id: songComponent
+                    Item{
+                        ListButtonField{
+                            delegate_text: modelData.title
+                            onUserClickedElement: {
+                                // just_used_id = + modelData.id;
+                                // just_used_title = modelData.title;
+                                console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
+                                // backend.database.loadEditPlaylistSongModel(+modelData.id)
+                            }
+                            onUserClickedPlay: {
+                                // console.log("play: " + modelData.title)
+                            }
+                        }
+                    }
+                }
+
             }
+
+
+
+
+
+
         }
     }
 
-    // ScrollCurrentSongMarker{
-    //     dltSongIndex: currentSongIndex
-    //     dltSongsCount: songsCount
-    //     dltDisplay: scrollView.contentHeight > scrollView.height
-    // }
+    ScrollCurrentSongMarker{
+        dltSongIndex: currentSongIndex
+        dltSongsCount: Backend.playlist.songs.length
+        dltVisible: scrollView.contentHeight > scrollView.height
+    }
 
     footer: MainPageFooter{}
 }

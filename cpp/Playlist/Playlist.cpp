@@ -1,9 +1,12 @@
 #include "Playlist.h"
 
 Playlist::Playlist(QObject *parent)
-    : QObject{parent}
+    : QObject{parent},
+    m_playlistInitialized(false)
 {
-
+    /// connect sub signals to signal
+    QObject::connect(this, &Playlist::songsLoaded, this, &Playlist::songsChanged);
+    QObject::connect(this, &Playlist::songsShuffled, this, &Playlist::songsChanged);
 }
 
 SongList Playlist::getSongs() const
@@ -18,24 +21,39 @@ void Playlist::loadPlaylistSongs(SongList songs)
 
     m_songs = songs;
     m_songs = this->shuffleList(m_songs);
-    emit this->songsChanged();
+
+    // DB << "list of songs:";
+    // DB << m_songs;
+    // for(const auto &s : m_songs)
+    //     DB << s->getID() << " " << s->getTitle();
+
+    if(!m_playlistInitialized)
+    {
+        m_playlistInitialized = true;
+        emit this->playlistInitialized();
+    }
+
+    emit this->songsLoaded();
 }
 
 void Playlist::shufflePlaylistSongs()
 {
     m_songs = this->shuffleList(m_songs);
-    emit this->songsChanged();
+    emit this->songsShuffled();
 }
 
 void Playlist::loadSongByPosition(int position, bool forCurrentSongPurpose)
 {
+    DB << "start to loading song by position:" << position << "for"
+       << (forCurrentSongPurpose ? "current song" : "next song");
+
     if(m_songs.empty())
     {
         WR << "songs list is empty!";
         return;
     }
 
-    if(m_songs.size() >= position)
+    if(position >= m_songs.size())
     {
         WR << "position:" << position << "goes out of bounds in songs list size:"<< m_songs.size();
         return;
@@ -52,6 +70,9 @@ void Playlist::loadSongByPosition(int position, bool forCurrentSongPurpose)
 
 void Playlist::loadSongByID(int id, bool forCurrentSongPurpose)
 {
+    DB << "start to loading song by id:" << id << "for"
+       << (forCurrentSongPurpose ? "current song" : "next song");
+
     if(m_songs.empty())
     {
         WR << "songs list is empty!";
@@ -90,6 +111,8 @@ void Playlist::loadSongByID(int id, bool forCurrentSongPurpose)
 
 void Playlist::loadNextSongByCurrentSongID(int currentSongID)
 {
+    DB << "start to loading next song current song id:" << currentSongID;
+
     if(m_songs.empty())
     {
         WR << "songs list is empty!";
@@ -157,10 +180,15 @@ SongList Playlist::shuffleList(const SongList &songs)
     auto shuffleOrderList = Playlist::getUniqueRandomNumbers(songsCount);
 
     SongList songsNewOrder;
+    int songListIndex = 0;
 
     // read random number from songs and append to the songNewOrder list
-    for(const int &i : shuffleOrderList)
-        songsNewOrder.append(songs[i]);
+    for(const int &randomNumber : shuffleOrderList)
+    {
+        Song *song = songs[randomNumber];
+        song->setListIndex(songListIndex++);
+        songsNewOrder.append(song);
+    }
 
     return songsNewOrder;
 }

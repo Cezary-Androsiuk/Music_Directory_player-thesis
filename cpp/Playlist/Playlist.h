@@ -21,15 +21,18 @@ public:
     // void setSongs()
 public slots:
     void loadPlaylistSongs(SongList songs);         /// triggered by Backend::songsChanged(SongList songs)
-    void shufflePlaylistSongs();
+    void shufflePlaylistSongs();                    /// triggered by QML button
 
     void loadSongByPosition(int position, bool forCurrentSongPurpose = true);
     void loadSongByID(int id, bool forCurrentSongPurpose = true);
     void loadNextSongByCurrentSongID(int currentSongID);
 
 signals:
-    void songsChanged();
-    void newCurrentSongLoaded(Song *song);
+    void playlistInitialized();             /// emitted after fist time the loadPlaylistSong has been executed and triggers Player to initialize
+    void songsLoaded();                     /// sub signal for songsChanged emitted after songs has been loaded // mainly used by Player
+    void songsShuffled();                   /// sub signal for songsChanged emitted after songs has been shuffled // mainly used by Player
+    void songsChanged();                    /// emitted when any change occur in songs list // mainly used by QML
+    void newCurrentSongLoaded(Song *song);  /// emitted after
     void newNextSongLoaded(Song *song);
 
 private:
@@ -37,6 +40,7 @@ private:
     static SongList shuffleList(const SongList &songs);
 
 private:
+    bool m_playlistInitialized;
     SongList m_songs;
 };
 

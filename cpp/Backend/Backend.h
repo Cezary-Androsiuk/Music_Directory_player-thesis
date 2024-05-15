@@ -25,9 +25,9 @@
 class Backend : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Personalization *personalization READ getPersonalization NOTIFY personalizationChanged   FINAL)
-    Q_PROPERTY(Playlist *playlist               READ getPlaylist        NOTIFY playlistChanged          FINAL)
-    Q_PROPERTY(Player *player                   READ getPlayer          NOTIFY playerChanged            FINAL)
+    Q_PROPERTY(Personalization *personalization READ getPersonalization CONSTANT FINAL)
+    Q_PROPERTY(Playlist *playlist               READ getPlaylist        CONSTANT FINAL)
+    Q_PROPERTY(Player *player                   READ getPlayer          CONSTANT FINAL)
 
 public:
     explicit Backend(QObject *parent = nullptr);
@@ -57,8 +57,8 @@ public: /// getters / setters
     Playlist *getPlaylist() const;
     Player *getPlayer() const;
 
-    Q_INVOKABLE void setRootDirectory(QUrl rootDirectory);                                          // ?
-    Q_INVOKABLE void setSongExtensions(QString songExtensions);                                          // ? prefix
+    void setRootDirectory(QUrl rootDirectory);
+    void setSongExtensions(QString songExtensions);
 
 public slots: /// actions
     void loadSongs();           /// triggered by MainPage.onCompleted and rootDirectoryChanged
@@ -71,10 +71,6 @@ signals: /// something happend in action
     void loadingSongsFinished();                                                    /// emitted after loading songs has been finished
 
 signals: /// some variable changed
-    void personalizationChanged(); // never emitted                                          // ?
-    void playlistChanged(); // never emitted                                          // ?
-    void playerChanged(); // never emitted                                          // ?
-
     void rootDirectoryChanged();        /// used to trigger loadSongs
     void songsChanged(SongList songs);  /// used to trigger Playlist::loadPlaylistSongs(SongList songs)
 
