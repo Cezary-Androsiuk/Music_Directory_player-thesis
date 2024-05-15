@@ -2,11 +2,14 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+#include <cpp/DebugPrint.h>
 #include "cpp/Backend/Backend.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    // qInstallMessageHandler(messageHandler);
 
     QQmlApplicationEngine engine;
 

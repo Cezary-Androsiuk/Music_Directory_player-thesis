@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QString>
 
+#include <QFile>
+#include <QTextStream>
+
 #define PRETTY_FUNC true
 #define MULTI_LINE false
 
@@ -41,5 +44,22 @@
 // later, in addition, you can add saving the information passed to the DB in the log file and add a class for QML to make it work instead of console.log
 
 
+// void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+// {
+//     QFile logFile("log.txt");
+//     if (!logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+//         return;
+
+//     QTextStream logStream(&logFile);
+//     if(false); // for beauty code below
+//     else if(type == QtDebugMsg)     logStream << "Debug: " << msg << " (" << context.file << ":" << context.line << ", " << context.function << ")\n";
+//     else if(type == QtWarningMsg)   logStream << "Warning: " << msg << " (" << context.file << ":" << context.line << ", " << context.function << ")\n";
+//     else if(type == QtCriticalMsg)  logStream << "Critical: " << msg << " (" << context.file << ":" << context.line << ", " << context.function << ")\n";
+//     else if(type == QtFatalMsg)     logStream << "Fatal: " << msg << " (" << context.file << ":" << context.line << ", " << context.function << ")\n";
+
+//     // Wyświetlanie w terminalu
+//     QTextStream terminalStream(stdout);
+//     terminalStream << msg << "\n";
+// }
 
 #endif // DEBUGPRINT_H

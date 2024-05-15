@@ -1,6 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
+#include <QtCore>
 #include <QObject>
 #include <QString>
 #include <QList>
@@ -18,74 +19,76 @@
 #include <cpp/Song/Song.h>
 #include <cpp/Personalization/Personalization.h>
 #include <cpp/Playlist/Playlist.h>
+#include <cpp/Player/Player.h>
 
-
-/*
- * exec path:
- * 1 start main.cpp
- * 2 create Backend
- * 3 create QML
- * 4 QML emits signal to Backend "initializeBackend" (with loading page)
- * 5 in slot (in Backend) "initializeBackend" prepare all stuff, like personalizations and directoryStructure
- * 6 Backend will emit error (like personalizationLoadError) if anything failed or emit backendInitialized if all was fine
- * 7
- */
 
 class Backend : public QObject
 {
-    typedef QList<Song *> SongList;
-
     Q_OBJECT
     Q_PROPERTY(Personalization *personalization READ getPersonalization NOTIFY personalizationChanged   FINAL)
     Q_PROPERTY(Playlist *playlist               READ getPlaylist        NOTIFY playlistChanged          FINAL)
+    Q_PROPERTY(Player *player                   READ getPlayer          NOTIFY playerChanged            FINAL)
 
 public:
     explicit Backend(QObject *parent = nullptr);
     ~Backend();
 
-    Q_INVOKABLE void initializeBackend();
+    /// initialize Backend
+    void initializeParameters();
+    void initializeConnections();
 
-    void savePersonalization();
+    /// destroy Backend
+    // none
 
-public slots:
+public slots: /// after qml was loaded (to check if steps are correctly initialized or display popup)
+    void checkPersonalization();
+    /// idea is that QML will structurally and with specyfic order call "check" and react to correct calling another one untill received backendInitialized()
+signals: /// communicate with QML to check if initialized correctly (emited by above slots)
+    void personalizationLoaded();                       /// emitted after confirmed that personalization has been initialized correctly
+    void personalizationLoadError(int errorCode);       /// emitted after finding out that personalization has not been initialized correctly
+    void backendInitialized();                          /// emitted after confirming that the last(currently personalization) of the steps(these above) has been correctly initialized
+
+public slots: /// initialize actions
     void reinitializePersonalization();
     void useDefaultPersonalization();
 
-    void loadSongs();
-
-public: // getters
+public: /// getters / setters
     Personalization *getPersonalization() const;
     Playlist *getPlaylist() const;
-    QUrl getRootDirectory() const;
-    QString getSongExtensions() const;
+    Player *getPlayer() const;
 
-public: // setters
-    void setRootDirectory(QUrl rootDirectory);
-    void setSongExtensions(QString songExtensions);
+    Q_INVOKABLE void setRootDirectory(QUrl rootDirectory);                                          // ?
+    Q_INVOKABLE void setSongExtensions(QString songExtensions);                                          // ? prefix
 
-signals: // something happend
-    void backendInitialized();
-    void personalizationLoadError();
-    void songLoadError(QString desc);
-    void loadProtectorLimited(int limit);
+public slots: /// actions
+    void loadSongs();           /// triggered by MainPage.onCompleted and rootDirectoryChanged
+    void cancelLoadingSongs();  /// trigered by MainPage.popup.cancel (button)
 
-signals: // some variable changed
-    void personalizationChanged(); // never emited
-    void playlistChanged(); // never emited
+signals: /// something happend in action
+    void songsLoadError(QString desc);                                              /// emitted after error occur while loading songs (propably rootDirectory not exist)
+    void loadProtectorLimited(int limit);                                           /// emitted after count of loaded files reached Personalization::getLoadProtector()
+    void loadingSongsInProgress(int songsLoaded, int filesLoaded, int filesTotal);  /// emitted while loading songs to inform about progress
+    void loadingSongsFinished();                                                    /// emitted after loading songs has been finished
 
-    void rootDirectoryChanged();
-    void songsChanged(SongList songs);
-    void songExtensionsChanged();
+signals: /// some variable changed
+    void personalizationChanged(); // never emitted                                          // ?
+    void playlistChanged(); // never emitted                                          // ?
+    void playerChanged(); // never emitted                                          // ?
 
-private:
-    Song *createSong(QFileInfo &file, Song *song);
+    void rootDirectoryChanged();        /// used to trigger loadSongs
+    void songsChanged(SongList songs);  /// used to trigger Playlist::loadPlaylistSongs(SongList songs)
+
+private: // private methods
 
 private:
     Personalization *m_personalization;
     Playlist *m_playlist;
+    Player *m_player;
 
     QUrl m_rootDirectory; // stores root path where all songs are located (also in subfolders)
     QString m_songExtensions;
+
+    bool m_cancelLoadingSong;
 };
 
 #endif // BACKEND_H

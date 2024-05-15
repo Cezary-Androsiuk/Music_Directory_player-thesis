@@ -10,15 +10,11 @@ Item{
 
     property var rootDirectory: Backend.personalization.rootDirectory
     property string localFileRootDirectory: {
-        if(rootDirectory === "")
-            "---";
-        else
-        {
-            var path = "" + rootDirectory;
-            path = path.replace("file:///", "");
+        var path = "" + rootDirectory;
+        path = path.replace("file:///", "");
+        if(path.charAt(path.length - 1) !== '/')
             path += "/";
-            path;
-        }
+        path;
     }
     property bool showRefreshListButton: Backend.personalization.showRefreshListButton
 

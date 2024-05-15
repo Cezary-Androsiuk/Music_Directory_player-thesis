@@ -10,8 +10,6 @@
 
 class Playlist : public QObject
 {
-    typedef QList<Song *> SongList;
-
     Q_OBJECT
     Q_PROPERTY(SongList songs READ getSongs NOTIFY songsChanged FINAL)
 
@@ -22,11 +20,17 @@ public:
 
     // void setSongs()
 public slots:
-    void loadPlaylistSongs(SongList songs);
+    void loadPlaylistSongs(SongList songs);         /// triggered by Backend::songsChanged(SongList songs)
     void shufflePlaylistSongs();
+
+    void loadSongByPosition(int position, bool forCurrentSongPurpose = true);
+    void loadSongByID(int id, bool forCurrentSongPurpose = true);
+    void loadNextSongByCurrentSongID(int currentSongID);
 
 signals:
     void songsChanged();
+    void newCurrentSongLoaded(Song *song);
+    void newNextSongLoaded(Song *song);
 
 private:
     static std::vector<int> getUniqueRandomNumbers(int count);
@@ -37,3 +41,11 @@ private:
 };
 
 #endif // PLAYLIST_H
+
+
+/*
+ * init:                    player current = getSongByPos(0),       next = nextSong(current.id)
+ * songFinished:            player current = next,                  next = nextSong(current.id)
+ * clicked on play songID   player current = getSongById(songID),   next = nextSong(current.id)
+ * on shuffle:              player current = current,               next = getSongByPos(0)
+ */

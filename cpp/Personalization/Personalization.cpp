@@ -2,6 +2,7 @@
 
 Personalization::Personalization(QObject *parent)
     : QObject{parent},
+    m_errorCodeIfOccurWhileLoading(0),
     m_isDarkTheme(DEFAULT_IS_DARK_THEME),
     m_darkAccentColor(DEFAULT_DARK_ACCENT_COLOR),
     m_lightAccentColor(DEFAULT_LIGHT_ACCENT_COLOR),
@@ -49,20 +50,24 @@ void Personalization::setDefaultPersonalizationData()
     this->setSongTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS);
     this->setLoadProtector(DEFAULT_LOAD_PROTECTOR);
     this->setShowRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON);
+
+    m_errorCodeIfOccurWhileLoading = 0;
 }
 
-int Personalization::loadPersonalizationFromJson()
+void Personalization::loadPersonalizationFromJson()
 {
     auto PJP = PERSONALIZATIONS_JSON_PATH;
     if(!QFile(PJP).exists()){
         WR << "file " << PERSONALIZATIONS_JSON_PATH << " not found";
-        return 10;
+        m_errorCodeIfOccurWhileLoading = 10;
+        return;
     }
 
     QFile json_file(PJP);
     if(!json_file.open(QIODevice::ReadOnly | QIODevice::Text)){
         WR << "Can not open personalization json file: " << PJP;
-        return 20;
+        m_errorCodeIfOccurWhileLoading = 20;
+        return;
     }
 
     QJsonParseError json_error;
@@ -71,12 +76,14 @@ int Personalization::loadPersonalizationFromJson()
 
     if(json_error.error != QJsonParseError::NoError) {
         WR << "json parse error: " << json_error.errorString();
-        return 30;
+        m_errorCodeIfOccurWhileLoading = 30;
+        return;
     }
 
     if(!json_data.isObject()){
         WR << "json file does not contains json object";
-        return 40;
+        m_errorCodeIfOccurWhileLoading = 40;
+        return;
     }
 
     // at this point data are default
@@ -118,10 +125,10 @@ int Personalization::loadPersonalizationFromJson()
 
     DB << "personalization data readed!";
     this->printValues();
-    return 0;
+    m_errorCodeIfOccurWhileLoading = 0;
 }
 
-int Personalization::savePersonalizationToJson()
+void Personalization::savePersonalizationToJson()
 {
     QString PJP = PERSONALIZATIONS_JSON_PATH;
 
@@ -163,7 +170,7 @@ int Personalization::savePersonalizationToJson()
     QFile file(PJP);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
         WR << "error while saving json file to " << PJP << " with error " << file.errorString();
-        return 10;
+        return;
     }
 
     file.write(json_data.toJson());
@@ -171,7 +178,12 @@ int Personalization::savePersonalizationToJson()
 
     DB << "personalization data saved!";
     this->printValues();
-    return 0;
+    return;
+}
+
+int Personalization::getErrorCodeIfOccurWhileLoading() const
+{
+    return m_errorCodeIfOccurWhileLoading;
 }
 
 bool Personalization::getIsDarkTheme() const
@@ -253,7 +265,7 @@ void Personalization::setRootDirectory(const QUrl &newDirectory)
         return;
 
     m_rootDirectory = newDirectory;
-    emit this->rootDirectoryChanged();
+    emit this->rootDirectoryChanged(m_rootDirectory);
 }
 
 void Personalization::setShowTooltips(bool showTooltips)
@@ -271,7 +283,7 @@ void Personalization::setSongExtensions(const QString &songExtensions)
         return;
 
     m_songExtensions = songExtensions;
-    emit this->songExtensionsChanged();
+    emit this->songExtensionsChanged(m_songExtensions);
 }
 
 void Personalization::setSongTransitionTimeMS(int songTransitionTimeMS)

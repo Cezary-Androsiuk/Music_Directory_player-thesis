@@ -28,34 +28,39 @@ ApplicationWindow {
       Ale to po co w ogóle nadrabiać skoro mówisz, że "trochę nadrobisz", możesz poprostu kontynuować już do końca?
       Ponieważ tak jak wspomnialem nawet nie był bym w stanie opisać czy omówić tej aplikacji, a na obronie również (o ile nie bardziej niż wielkość) jest istotna
       bezawaryjność aplikacji, a takową by było trudno utrzymać przy takej ilości fukcjonalności i pośpiechu. Mając mniejszą aplikacje mogę się bardziej skupić na
-      bezbłędności i dodatkach, a opisywać i tak będzie co przy technologiach Qt, QML, JavaScript, C++ oraz JSON
+      bezbłędności i dodatkach, a opisywać i tak będzie co przy technologiach Qt, QML, JavaScript, C++, JSON oraz Linux
 
     */
 
     Component.onCompleted: {
         console.log("qml initialized")
-        Backend.initializeBackend()
+        Backend.checkPersonalization() // first step to check initialization
         // this way allow to display popup when anything failed in loading backend
     }
 
     Connections{
         target: Backend
+        function onPersonalizationLoaded(){
+            // do nothing cause this was the last step
+        }
+
+        function onPersonalizationLoadError(errorCode){
+            p_personalizationLoadError.open()
+            p_personalizationLoadError.textMessage = "Error while loading personalizations, error code: " + errorCode
+        }
+
         function onBackendInitialized(){
             console.log("backend initialized")
             mainStackView.replace(Qt.resolvedUrl("pages/MainPage.qml"))//, {parentStackView: mainStackView}) // to pass property
-        }
-
-        function onPersonalizationLoadError(){
-            p_personalizationLoadError.open()
         }
     }
 
     Popup3{
         id: p_personalizationLoadError
-        textMessage: "Error while loading personalizations"
         textLB: "Retry"
         textMB: "Continue"
         textRB: "Exit"
+        jea: false
 
         onClickedLB: Backend.reinitializePersonalization()
         onClickedMB: Backend.useDefaultPersonalization()
@@ -74,21 +79,21 @@ ApplicationWindow {
             id: mainStackView
             anchors.fill: parent
             initialItem: Item{
-                BusyIndicator{
-                    id: bi
-                    anchors.centerIn: parent
-                    width: 100
-                    height: 100
-                }
-                Text{
-                    anchors{
-                        horizontalCenter: bi.horizontalCenter
-                        top: bi.bottom
-                    }
-                    text: "Loading view"
-                    color: root.color_accent1
-                    font.pixelSize: 15
-                }
+                // BusyIndicator{
+                //     id: bi
+                //     anchors.centerIn: parent
+                //     width: 100
+                //     height: 100
+                // }
+                // Text{
+                //     anchors{
+                //         horizontalCenter: bi.horizontalCenter
+                //         top: bi.bottom
+                //     }
+                //     text: "Loading view"
+                //     color: root.color_accent1
+                //     font.pixelSize: 15
+                // }
             }
 
             // on backend loaded to remove initial item

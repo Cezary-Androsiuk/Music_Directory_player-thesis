@@ -56,8 +56,15 @@ private:
 
 public:
     void setDefaultPersonalizationData();
-    int loadPersonalizationFromJson();
-    int savePersonalizationToJson();
+    void loadPersonalizationFromJson();
+    void savePersonalizationToJson();
+
+public: // getters / setters
+    /**
+     * returns 0 if none error occur while loading personalization from json,
+     * if any error occur while loading personalizations from json error code will be returned
+     */
+    int getErrorCodeIfOccurWhileLoading() const;
 
     bool getIsDarkTheme() const;
     QColor getDarkAccentColor() const;
@@ -79,18 +86,20 @@ public:
     void setLoadProtector(int loadProtector);
     void setShowRefreshListButton(bool showRefreshListButton);
 
-signals:
+signals: // anything changed
     void isDarkThemeChanged();
     void darkAccentColorChanged();
     void lightAccentColorChanged();
-    void rootDirectoryChanged();
+    void rootDirectoryChanged(QUrl rootDirectory);
     void showTooltipsChanged();
-    void songExtensionsChanged();
+    void songExtensionsChanged(QString songExtensions);
     void songTransitionTimeMSChanged();
     void loadProtectorChanged();
     void showRefreshListButtonChanged();
 
 private:
+    int m_errorCodeIfOccurWhileLoading;
+
     bool m_isDarkTheme;
     QColor m_darkAccentColor;
     QColor m_lightAccentColor;

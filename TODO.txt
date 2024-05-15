@@ -4,10 +4,11 @@ NONE - dodać robienie struktury katalogu po za inicjalizacją (po zmianie ście
 DONE - dodać zapisywanie rozszerzeń plików muzycznych 
 ? dodać zapisywanie rozszerzeń plików ikonek
 NONE - ustawić budowanie struktury zależnie od muzyk (tam gdzie nie ma muzyki ignoruj)
-? poprawić tekst na przyciskach popup (żeby się aktualizował)
+- poprawić kolor na przyciskach popup (żeby się aktualizował)
 ? sprowadzić pupupy do wspólnego mianownika (przyciski wyodrębnić w komponenty)
 - sprawdzić co się dzieje po kliknięciu po za popup (gdy nie jest to popup informacyjny lub potwierdzenia)
 DONE ? ustawić żeby rootDirectory się przesuwał w lewo, gdy długość tekstu przekroczy długość pola w jakim się znajduje
 - utworzyć player
 - zależnie od playera wyświetlać obecną i następną piosenkę
 - komunikacja player <-> playlist
+? można zmienić komunikację backend/popups, nie tylko przesyłać desc ale errorCode (który może być interpretowany przez qml) a desc był by ukryty i trzeba rozwinąć

@@ -4,7 +4,7 @@ project(Music_directory_player VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Multimedia)
 
 qt_standard_project_setup()
 
@@ -54,6 +54,8 @@ qt_add_qml_module(appMusic_directory_player
     RESOURCES assets/icons/left_arrow.png
     RESOURCES assets/icons/folder.png
     RESOURCES assets/icons/opened_folder.png
+    QML_FILES qml/popups/PopupLoading.qml
+    SOURCES cpp/PlayerQueue/PlayerQueue.h cpp/PlayerQueue/PlayerQueue.cpp
 
     # RESOURCES assets/icons/player/end.png
     # RESOURCES assets/icons/player/pause.png
@@ -79,7 +81,9 @@ set_target_properties(appMusic_directory_player PROPERTIES
 )
 
 target_link_libraries(appMusic_directory_player
-    PRIVATE Qt6::Quick
+    PRIVATE
+    Qt6::Quick
+    Qt6::Multimedia
 )
 
 include(GNUInstallDirs)

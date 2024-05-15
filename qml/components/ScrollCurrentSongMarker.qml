@@ -3,6 +3,9 @@ import QtQuick 2.15
 Item{
     id: currentSongMarker
     required property bool dltDisplay
+    property int dltSongIndex: 0
+    property int dltSongsCount: 0
+
 
     anchors{
         top: parent.top
@@ -20,11 +23,11 @@ Item{
         }
         height: width/2
         y: {
-            if(itemCount === 0) 0
-            else ((itemIndex+0)/itemCount) * parent.height
+            if(dltSongsCount === 0) 0
+            else ((dltSongIndex+0)/dltSongsCount) * parent.height
         }
         visible: {
-            if(itemCount === 0) false
+            if(dltSongsCount === 0) false
             else true
         }
 

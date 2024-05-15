@@ -33,7 +33,7 @@ Popup {
     modal: true
     closePolicy: jea ?
                      Popup.CloseOnEscape | Popup.CloseOnPressOutside :
-                     NoAutoClose
+                     Popup.NoAutoClose
 
     Item{
         Component.onCompleted: {
