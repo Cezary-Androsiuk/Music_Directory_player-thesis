@@ -21,10 +21,12 @@ NONE ? dodać tworzenie ścieżki ale z możliwą ekspansją na tworzenie logów
 ? można zmienić komunikację backend/popups, nie tylko przesyłać desc ale errorCode (który może być interpretowany przez qml) a desc był by ukryty i trzeba rozwinąć
 DONE dodać desc(opis) dla zmiennych po najechaniu kursorem
 - dodać treść dla desc zmiennych w settings
-- zmienić rozdzielczość ikon żeby pasowały do wyświetlanej rozdzielczości (skalowanie w QML nie działa dobrze XD)
+DONE - zmienić rozdzielczość ikon żeby pasowały do wyświetlanej rozdzielczości (skalowanie w QML nie działa dobrze XD)
 - dopasowac InfoToolTip do tekstu tak żeby dobrze wyglądał
 - komunikacja player <-> playlist
 - poprawić kolor na przyciskach popup (żeby się aktualizował)
+- dodać potwierdzenie przeładowania piosenek z ostrzeżeniem o zrezetowaniu playera
+- zaimplementować własnego buttona dla popup i delegate.SongField
 
 
 

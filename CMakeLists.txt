@@ -54,11 +54,13 @@ qt_add_qml_module(appMusic_directory_player
     RESOURCES assets/icons/refresh.png
     RESOURCES assets/icons/settings.png
     RESOURCES assets/icons/shuffle.png
-    RESOURCES assets/icons/arrows_long_left.png
     RESOURCES assets/icons/left_arrow.png
-    # RESOURCES assets/icons/folder.png
-    RESOURCES assets/icons/opened_folder.png
     RESOURCES assets/icons/info.png
+    # I CAN' DECIDE WHICH IS BETTER
+    RESOURCES assets/icons/folder_ios.png
+    RESOURCES assets/icons/opened_folder_ios.png
+    RESOURCES assets/icons/folder_windows.png
+    RESOURCES assets/icons/opened_folder_windows.png
 
     # RESOURCES assets/icons/player/end.png
     # RESOURCES assets/icons/player/pause.png

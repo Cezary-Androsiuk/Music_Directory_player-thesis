@@ -36,16 +36,10 @@ Item{
                 (pw < ph) ? pw : ph;
             }
         }
-        mipmap: true // smooths image
+        // mipmap: true // smooths image
 
         source: dltImageIdle
     }
-    // Rectangle{
-    //     id: imageAreaBorders
-    //     color: "red"
-    //     anchors.fill: img
-    //     opacity: 0.2
-    // }
 
     ColorOverlay {
         id: colorOverlay

@@ -44,7 +44,7 @@ Page {
             ImageButton{
                 dltDescription: "Go Back"
                 dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/left_arrow.png")
-                dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/left_arrow.png")
+                dltImageHover: dltImageIdle
                 onUserClicked: closeSettingsView()
             }
         }

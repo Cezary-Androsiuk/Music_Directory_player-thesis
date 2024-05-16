@@ -12,13 +12,13 @@ Item{
     property color dltIdleColor: root.color_element_idle
     property color dltHoverColor: root.color_element_hover
 
-    // property bool dltDarkThemeRefresh: root.dark_theme
-    // onDltDarkThemeRefreshChanged: {
-    //     // force to refresh because can't find reason why this isn't
-    //     //    allways refreshing after changing dark_theme state
-    //     // i think that is caused by some interaction with containsMouse
-    //     colorOverlay.color = dltIdleColor
-    // }
+    property bool dltDarkThemeRefresh: root.dark_theme
+    onDltDarkThemeRefreshChanged: {
+        // force to refresh because can't find reason why this isn't
+        //    allways refreshing after changing dark_theme state
+        // i think that is caused by some interaction with containsMouse
+        colorOverlay.color = dltIdleColor
+    }
 
     Image{
         id: img
@@ -32,7 +32,7 @@ Item{
                 (pw < ph) ? pw : ph;
             }
         }
-        mipmap: true // smooths image
+        // mipmap: true // smooths image
 
         source: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/info.png")
     }

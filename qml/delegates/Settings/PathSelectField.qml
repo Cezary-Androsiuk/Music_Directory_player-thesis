@@ -47,8 +47,23 @@ Item {
 
             ImageButton{
                 dltDescription: "Select " + dltText
-                dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")//Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
-                dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")
+                // I CAN' DECIDE WHICH IS BETTER
+                // ios static
+                dltImageIdle: dltImageHover
+                dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder_ios.png")
+
+                // ios interactive
+                // dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder_ios.png")
+                // dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder_ios.png")
+
+                // windows static
+                // dltImageIdle: dltImageHover
+                // dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder_windows.png")
+
+                // windows interactive
+                // dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder_windows.png")
+                // dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder_windows.png")
+
                 onUserClicked: {
                     folderDialog.open()
                 }
