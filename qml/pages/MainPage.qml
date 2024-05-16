@@ -41,8 +41,7 @@ Page {
 
         function onLoadingSongsFinished(/*do not use songList argument in QML*/){
             scrollView.visible = true
-            if(p_loadingSong.opened) // will be closed if loading song was protected
-                p_loadingSong.close()
+            p_loadingSong.close()
         }
 
         function onLoadingSongsError(desc){

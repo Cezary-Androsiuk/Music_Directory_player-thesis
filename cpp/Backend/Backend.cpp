@@ -142,12 +142,14 @@ void Backend::loadSongs()
     int filesLoaded = 0;
     int filesTotal = 0;
     int filesLimit = m_personalization->getLoadProtector();
-
+    DB << "--- start";
     // fast count songs to tell user how many songs are about to load
     try{ // try is because if directory iterator falls on directory that cannot be oppened \
         then will throw an exception
+        DB << "--- loop start";
         for(const auto &i : std::filesystem::recursive_directory_iterator(rootPath))
         {
+            DB << "--- loop start with:" << i.path().string().c_str();
             ++filesTotal;
             if(filesTotal >= filesLimit)
                 break;
@@ -158,7 +160,9 @@ void Backend::loadSongs()
                     loading songs loop
                 break;
             }
+            DB << "--- loop ends with:" << i.path().string().c_str();
         }
+        DB << "--- loop end";
     }
     catch(std::exception e)
     {
@@ -167,15 +171,17 @@ void Backend::loadSongs()
             QString("exception occur while loading count of files: %1").arg(e.what()));
         return;
     }
-
+    DB << "--- middle";
     double refreshProgressPercentage = 0.05; // 5%
     int filesLoadedToRefresh = 0;
 
 
     SongList songs;
     try{
+        DB << "--- loop start";
         for(const auto &i : std::filesystem::recursive_directory_iterator(rootPath))
         {
+            DB << "--- loop start with:" << i.path().string().c_str();
             QFileInfo file(std::filesystem::path(i).string().c_str());
 
             // check if match one of the extensions
@@ -241,7 +247,9 @@ void Backend::loadSongs()
                 emit this->loadingSongsProtected(filesLoaded);
                 break;
             }
+            DB << "--- loop ends with:" << i.path().string().c_str();
         }
+        DB << "--- loop end";
     }
     catch(std::exception e)
     {
@@ -250,7 +258,6 @@ void Backend::loadSongs()
             QString("exception occur while loading files: %1").arg(e.what()));
         return;
     }
-
 
     DB << "loading songs finished";
     emit this->loadingSongsFinished(songs);
