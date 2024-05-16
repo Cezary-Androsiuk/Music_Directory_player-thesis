@@ -18,11 +18,6 @@ void Backend::initializeParameters()
     m_personalization = new Personalization(this);
     m_personalization->loadPersonalizationFromJson(); /// if an error occur will be handled in initializeBackendWithQML()
 
-    /// manually assign the initialised values (connection was not created yet)
-    this->setRootDirectory(m_personalization->getRootDirectory());
-    /// no connection has been set, then loadSongs need to be started manually also
-    this->setSongExtensions(m_personalization->getSongExtensions());
-
     m_playlist = new Playlist(this);
     m_player = new Player(this);
 }
@@ -35,29 +30,21 @@ void Backend::initializeConnections()
     //         this->setRootDirectory(this->m_personalization->getRootDirectory());
     //     });
 
-    /// on personalization's rootDirectory changed, change Backend's rootDirectory
-    QObject::connect(m_personalization, &Personalization::rootDirectoryChanged,     this, &Backend::setRootDirectory);
-
-    /// on personalization's songExtensions changed, change Backend's songExtensions
-    QObject::connect(m_personalization, &Personalization::songExtensionsChanged,    this, &Backend::setSongExtensions);
-
     /// on rootDirectory changed, load songs again
-    QObject::connect(this, &Backend::rootDirectoryChanged,  this, &Backend::loadSongs);
+    QObject::connect(m_personalization, &Personalization::rootDirectoryChanged,  this, &Backend::loadSongs);
 
     /// on songs loaded, pass them to playlist
-    QObject::connect(this, &Backend::songsChanged, m_playlist, &Playlist::loadPlaylistSongs);
+    QObject::connect(this, &Backend::loadingSongsFinished, m_playlist, &Playlist::loadPlaylistSongs);
 
-    /// after the first loading of songs in playlist, start player to initialize with default songs (0 and 1)
-    QObject::connect(m_playlist, &Playlist::playlistInitialized, m_player, &Player::initialize);
+    /// after loading new songs in playlist, start player to initialize with default songs
+    QObject::connect(m_playlist, &Playlist::songsLoaded, m_player, &Player::initialize);
 
     /// on ask for Song by player, load song in playlist
     QObject::connect(m_player, &Player::askForSongByPosition,           m_playlist, &Playlist::loadSongByPosition);
     QObject::connect(m_player, &Player::askForSongByID,                 m_playlist, &Playlist::loadSongByID);
-    QObject::connect(m_player, &Player::askForNextSongByCurrentSongID,  m_playlist, &Playlist::loadNextSongByCurrentSongID);
 
     /// on song loaded by playlist, pass it to player
     QObject::connect(m_playlist, &Playlist::newCurrentSongLoaded,   m_player, &Player::setCurrentSong);
-    QObject::connect(m_playlist, &Playlist::newNextSongLoaded,      m_player, &Player::setNextSong);
 
 }
 
@@ -104,47 +91,23 @@ Player *Backend::getPlayer() const
     return m_player;
 }
 
-void Backend::setRootDirectory(QUrl rootDirectory)
-{
-    if(m_rootDirectory == rootDirectory) // removes binding loop in qml
-        return;
-
-    m_rootDirectory = rootDirectory;
-    emit this->rootDirectoryChanged(); /// used to trigger loadSongs
-}
-
-void Backend::setSongExtensions(QString songExtensions)
-{
-    if(m_songExtensions == songExtensions) // removes binding loop in qml
-        return;
-
-    m_songExtensions = songExtensions;
-}
-
 void Backend::loadSongs()
 {
+    emit this->loadingSongsStarted();
+    QCoreApplication::processEvents();
+
     // Qt not provides recursive directory iterator, so i will use std::filesystem
-    // QDir rootDirectory(m_rootDirectory.toLocalFile());
-    std::filesystem::path rootDirectory(m_rootDirectory.toLocalFile().toStdString());
-    if(!std::filesystem::exists(rootDirectory))
+    QUrl rootDirectory = m_personalization->getRootDirectory();
+    std::filesystem::path rootPath(rootDirectory.toLocalFile().toStdString());
+    if(!std::filesystem::exists(rootPath))
     {
         DB << "rootDirectory not exist! cannot load songs!";
-        emit this->songsLoadError("rootDirectory not exist! cannot load songs!");
+        emit this->loadingSongsError("rootDirectory not exist! cannot load songs!");
         return;
     }
 
-    QStringList extensions = m_songExtensions.split(";", Qt::SplitBehavior::enum_type::SkipEmptyParts);
-    // for(auto &i : filters)
-    //     i.push_front("*."); // convert list of extensions to filter
-    // rootDirectory.setNameFilters(filters);
-
-
-
-
-
-
-
-
+    QString stringExtensions = m_personalization->getSongExtensions();
+    QStringList extensions = stringExtensions.split(";", Qt::SplitBehavior::enum_type::SkipEmptyParts);
 
 
 
@@ -180,24 +143,30 @@ void Backend::loadSongs()
     int filesTotal = 0;
     int filesLimit = m_personalization->getLoadProtector();
 
-    emit this->loadingSongsInProgress(0,0,0);
-    QCoreApplication::processEvents();
-
-    try{
-        for(const auto &i : std::filesystem::recursive_directory_iterator(rootDirectory))
+    // fast count songs to tell user how many songs are about to load
+    try{ // try is because if directory iterator falls on directory that cannot be oppened \
+        then will throw an exception
+        for(const auto &i : std::filesystem::recursive_directory_iterator(rootPath))
         {
             ++filesTotal;
             if(filesTotal >= filesLimit)
                 break;
+            if(m_cancelLoadingSong)
+            {
+                DB << "loading songs count canceled";
+                // do not set m_cancelLoadingSong to false to stop also \
+                    loading songs loop
+                break;
+            }
         }
     }
     catch(std::exception e)
     {
         WR << "exception occur while loading count of files:" << e.what();
+        emit this->loadingSongsError(
+            QString("exception occur while loading count of files: %1").arg(e.what()));
+        return;
     }
-
-    if(filesTotal > filesLimit)
-        filesTotal = filesLimit;
 
     double refreshProgressPercentage = 0.05; // 5%
     int filesLoadedToRefresh = 0;
@@ -205,7 +174,7 @@ void Backend::loadSongs()
 
     SongList songs;
     try{
-        for(const auto &i : std::filesystem::recursive_directory_iterator(rootDirectory))
+        for(const auto &i : std::filesystem::recursive_directory_iterator(rootPath))
         {
             QFileInfo file(std::filesystem::path(i).string().c_str());
 
@@ -259,7 +228,8 @@ void Backend::loadSongs()
 
             if(m_cancelLoadingSong)
             {
-                m_cancelLoadingSong = false; // to not cancel next one
+                DB << "loading songs canceled";
+                m_cancelLoadingSong = false; // to not cancel next loading
                 break;
             }
 
@@ -267,7 +237,8 @@ void Backend::loadSongs()
             ++filesLoaded;
             if(filesLoaded >= filesLimit)
             {
-                emit this->loadProtectorLimited(filesLoaded);
+                DB << "loading songs protected";
+                emit this->loadingSongsProtected(filesLoaded);
                 break;
             }
         }
@@ -275,12 +246,14 @@ void Backend::loadSongs()
     catch(std::exception e)
     {
         WR << "exception occur while loading files:" << e.what();
+        emit this->loadingSongsError(
+            QString("exception occur while loading files: %1").arg(e.what()));
+        return;
     }
 
 
-    DB << "songs loaded!";
-    emit this->loadingSongsFinished(); // for qml
-    emit this->songsChanged(songs); // for playlist
+    DB << "loading songs finished";
+    emit this->loadingSongsFinished(songs);
 }
 
 void Backend::cancelLoadingSongs()

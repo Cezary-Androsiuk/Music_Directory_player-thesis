@@ -8,7 +8,8 @@ Item {
     id: pathSelectField
     anchors.fill: parent
 
-    property string dltText
+    property string dltText: ""
+    property string dltDesc: ""
     required property var dltValue
 
     LeftTextInList{

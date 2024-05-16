@@ -8,14 +8,13 @@ import "qrc:/Music_directory_player/qml/popups"
 Page {
 
     property var mdl: [
-        {id: 100, name: "Theme", delegate_type: "switch"},
-        {id: 200, name: "Accent Color", delegate_type: "color"},
-        {id: 300, name: "Songs Path", delegate_type: "select path"},
-        {id: 400, name: "Show Tooltips", delegate_type: "switch"},
-        {id: 500, name: "Songs Extenstions", delegate_type: "string"},
-        {id: 600, name: "Song Transition Time", delegate_type: "integer"},
-        {id: 700, name: "Load Protector", delegate_type: "integer"},
-        {id: 800, name: "Show Refresh List Button", delegate_type: "switch"}
+        {id: 100, name: "Theme", delegate_type: "switch", desc: ""},
+        {id: 200, name: "Accent Color", delegate_type: "color", desc: ""},
+        {id: 300, name: "Songs Path", delegate_type: "select path", desc: ""},
+        {id: 400, name: "Show Tooltips", delegate_type: "switch", desc: ""},
+        {id: 500, name: "Songs Extenstions", delegate_type: "string", desc: ""},
+        {id: 700, name: "Load Protector", delegate_type: "integer", desc: ""},
+        {id: 800, name: "Show Refresh List Button", delegate_type: "switch", desc: ""},
     ]
     property int delegateHeight: 60
     property int delegateWidth: width
@@ -49,12 +48,12 @@ Page {
             }
         }
 
-        // Text{
-        //     text: "Settings"
-        //     anchors.centerIn: parent
-        //     font.pixelSize: 20
-        //     color: root.color_accent1
-        // }
+        Text{
+            text: "Settings"
+            anchors.centerIn: parent
+            font.pixelSize: 20
+            color: root.color_accent1
+        }
     }
 
     ListView{
@@ -84,9 +83,8 @@ Page {
             Component {
                 id: switchComponent
                 SwitchField{
-                    dltText: {
-                        modelData.name
-                    }
+                    dltText: modelData.name
+                    dltDesc: modelData.desc
                     dltValue: {
                         if(false); // below lines are so beauty when equal <3
                         else if(modelData.id === 100) root.dark_theme
@@ -106,6 +104,7 @@ Page {
                 id: colorComponent
                 ColorSelectField{
                     dltText: modelData.name
+                    dltDesc: modelData.desc
                     dltColor: {
                         if(modelData.id === 200)
                             root.color_accent2 // is dynamically changed in Main.qml
@@ -129,6 +128,7 @@ Page {
                 id: selectPathComponent
                 PathSelectField{
                     dltText: modelData.name
+                    dltDesc: modelData.desc
                     dltValue: {
                         if(modelData.id === 300)
                             Backend.personalization.rootDirectory
@@ -144,6 +144,7 @@ Page {
                 id: stringComponent
                 StringField{
                     dltText: modelData.name
+                    dltDesc: modelData.desc
                     dltValue: {
                         if(modelData.id === 500)
                             Backend.personalization.songExtensions
@@ -159,15 +160,14 @@ Page {
                 id: integerComponent
                 IntegerField{
                     dltText: modelData.name
+                    dltDesc: modelData.desc
                     dltValue: {
                         if(false); // below lines are so beauty when equal <3
-                        else if(modelData.id === 600) Backend.personalization.songTransitionTimeMS
                         else if(modelData.id === 700) Backend.personalization.loadProtector
 
                     }
                     onDltValueChanged: {
                         if(false); // below lines are so beauty when equal <3
-                        else if(modelData.id === 600) Backend.personalization.songTransitionTimeMS = dltValue
                         else if(modelData.id === 700) Backend.personalization.loadProtector = dltValue
 
                     }

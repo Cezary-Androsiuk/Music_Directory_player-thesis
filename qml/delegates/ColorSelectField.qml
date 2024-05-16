@@ -8,6 +8,7 @@ Item{
     anchors.fill: parent
 
     property string dltText: ""
+    property string dltDesc: ""
     property var dltColor: null
     property var dltChoosedColor: null
     signal colorChoosed()

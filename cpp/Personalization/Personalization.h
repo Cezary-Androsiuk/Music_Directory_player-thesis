@@ -25,7 +25,6 @@
 // #define DEFAULT_ROOT_DIRECTORY QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
 #define DEFAULT_SHOW_TOOLTIPS true
 #define DEFAULT_SONG_EXTENSIONS "mp4;mkv;mp3;mov;wav"
-#define DEFAULT_SONG_TRANSITION_TIME_MS 300
 #define DEFAULT_LOAD_PROTECTOR 10'000
 #define DEFAULT_SHOW_REFRESH_LIST_BUTTON true
 
@@ -43,7 +42,6 @@ class Personalization : public QObject
     Q_PROPERTY(QUrl rootDirectory               READ getRootDirectory           WRITE setRootDirectory          NOTIFY rootDirectoryChanged         FINAL)
     Q_PROPERTY(bool showTooltips                READ getShowTooltips            WRITE setShowTooltips           NOTIFY showTooltipsChanged          FINAL)
     Q_PROPERTY(QString songExtensions           READ getSongExtensions          WRITE setSongExtensions         NOTIFY songExtensionsChanged        FINAL)
-    Q_PROPERTY(int songTransitionTimeMS         READ getSongTransitionTimeMS    WRITE setSongTransitionTimeMS   NOTIFY songTransitionTimeMSChanged  FINAL)
     Q_PROPERTY(int loadProtector                READ getLoadProtector           WRITE setLoadProtector          NOTIFY loadProtectorChanged         FINAL)
     Q_PROPERTY(bool showRefreshListButton       READ getShowRefreshListButton   WRITE setShowRefreshListButton  NOTIFY showRefreshListButtonChanged FINAL)
 
@@ -72,7 +70,6 @@ public: // getters / setters
     QUrl getRootDirectory() const;
     bool getShowTooltips() const;
     QString getSongExtensions() const;
-    int getSongTransitionTimeMS() const;
     int getLoadProtector() const;
     bool getShowRefreshListButton() const;
 
@@ -82,7 +79,6 @@ public: // getters / setters
     void setRootDirectory(const QUrl &newDirectory);
     void setShowTooltips(bool showTooltips);
     void setSongExtensions(const QString &songExtensions);
-    void setSongTransitionTimeMS(int songTransitionTimeMS);
     void setLoadProtector(int loadProtector);
     void setShowRefreshListButton(bool showRefreshListButton);
 
@@ -93,7 +89,6 @@ signals: // anything changed
     void rootDirectoryChanged(QUrl rootDirectory);
     void showTooltipsChanged();
     void songExtensionsChanged(QString songExtensions);
-    void songTransitionTimeMSChanged();
     void loadProtectorChanged();
     void showRefreshListButtonChanged();
 
@@ -106,7 +101,6 @@ private:
     QUrl m_rootDirectory;
     bool m_showTooltips;
     QString m_songExtensions;
-    int m_songTransitionTimeMS; // MS stands for miliseconds (1000ms = 1s)
     int m_loadProtector;
     bool m_showRefreshListButton;
 };

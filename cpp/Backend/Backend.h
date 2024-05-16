@@ -57,32 +57,23 @@ public: /// getters / setters
     Playlist *getPlaylist() const;
     Player *getPlayer() const;
 
-    void setRootDirectory(QUrl rootDirectory);
-    void setSongExtensions(QString songExtensions);
-
 public slots: /// actions
-    void loadSongs();           /// triggered by MainPage.onCompleted and rootDirectoryChanged
+    void loadSongs();           /// triggered by MainPage.onCompleted, rootDirectoryChanged and MainPageHeader.refreshSongs
     void cancelLoadingSongs();  /// trigered by MainPage.popup.cancel (button)
 
 signals: /// something happend in action
-    void songsLoadError(QString desc);                                              /// emitted after error occur while loading songs (propably rootDirectory not exist)
-    void loadProtectorLimited(int limit);                                           /// emitted after count of loaded files reached Personalization::getLoadProtector()
+    void loadingSongsStarted();                                                     /// emitted after loading songs started
     void loadingSongsInProgress(int songsLoaded, int filesLoaded, int filesTotal);  /// emitted while loading songs to inform about progress
-    void loadingSongsFinished();                                                    /// emitted after loading songs has been finished
+    void loadingSongsFinished(SongList songs);                                      /// emitted after loading songs has been finished
+    void loadingSongsError(QString desc);                                           /// emitted after error occur while loading songs (propably rootDirectory not exist)
+    void loadingSongsProtected(int limit);                                          /// emitted after count of loaded files reached Personalization::getLoadProtector()
 
-signals: /// some variable changed
-    void rootDirectoryChanged();        /// used to trigger loadSongs
-    void songsChanged(SongList songs);  /// used to trigger Playlist::loadPlaylistSongs(SongList songs)
-
-private: // private methods
+private: /// private methods
 
 private:
     Personalization *m_personalization;
     Playlist *m_playlist;
     Player *m_player;
-
-    QUrl m_rootDirectory; // stores root path where all songs are located (also in subfolders)
-    QString m_songExtensions;
 
     bool m_cancelLoadingSong;
 };

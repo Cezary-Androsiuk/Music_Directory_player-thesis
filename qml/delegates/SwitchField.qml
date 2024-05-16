@@ -7,6 +7,7 @@ Item{
     anchors.fill: parent
 
     property string dltText: ""
+    property string dltDesc: ""
     property bool dltValue: false
     property bool dltEnabled: true
 

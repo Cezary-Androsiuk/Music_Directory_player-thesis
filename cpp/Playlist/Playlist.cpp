@@ -9,6 +9,11 @@ Playlist::Playlist(QObject *parent)
     QObject::connect(this, &Playlist::songsShuffled, this, &Playlist::songsChanged);
 }
 
+Playlist::~Playlist()
+{
+
+}
+
 SongList Playlist::getSongs() const
 {
     return m_songs;
@@ -16,6 +21,7 @@ SongList Playlist::getSongs() const
 
 void Playlist::loadPlaylistSongs(SongList songs)
 {
+    DB << "received new song list";
     for(auto &song : m_songs)
         delete song;
 
@@ -27,25 +33,21 @@ void Playlist::loadPlaylistSongs(SongList songs)
     // for(const auto &s : m_songs)
     //     DB << s->getID() << " " << s->getTitle();
 
-    if(!m_playlistInitialized)
-    {
-        m_playlistInitialized = true;
-        emit this->playlistInitialized();
-    }
-
+    DB << "songs loaded";
     emit this->songsLoaded();
 }
 
 void Playlist::shufflePlaylistSongs()
 {
+    DB << "about to shuffle songs";
     m_songs = this->shuffleList(m_songs);
+    DB << "songs shuffled";
     emit this->songsShuffled();
 }
 
-void Playlist::loadSongByPosition(int position, bool forCurrentSongPurpose)
+void Playlist::loadSongByPosition(int position)
 {
-    DB << "start to loading song by position:" << position << "for"
-       << (forCurrentSongPurpose ? "current song" : "next song");
+    DB << "start to loading song by position:" << position;
 
     if(m_songs.empty())
     {
@@ -61,17 +63,13 @@ void Playlist::loadSongByPosition(int position, bool forCurrentSongPurpose)
 
     Song *nextSong = m_songs[position];
 
-    // both signals are connected to Player's slots
-    if(forCurrentSongPurpose)
-        emit this->newCurrentSongLoaded(nextSong);
-    else
-        emit this->newNextSongLoaded(nextSong);
+    // signal is connected to Player's slots
+    emit this->newCurrentSongLoaded(nextSong);
 }
 
-void Playlist::loadSongByID(int id, bool forCurrentSongPurpose)
+void Playlist::loadSongByID(int id)
 {
-    DB << "start to loading song by id:" << id << "for"
-       << (forCurrentSongPurpose ? "current song" : "next song");
+    DB << "start to loading song by id:" << id;
 
     if(m_songs.empty())
     {
@@ -102,51 +100,8 @@ void Playlist::loadSongByID(int id, bool forCurrentSongPurpose)
 
     Song *nextSong = m_songs[i];
 
-    // both signals are connected to Player's slots
-    if(forCurrentSongPurpose)
-        emit this->newCurrentSongLoaded(nextSong);
-    else
-        emit this->newNextSongLoaded(nextSong);
-}
-
-void Playlist::loadNextSongByCurrentSongID(int currentSongID)
-{
-    DB << "start to loading next song current song id:" << currentSongID;
-
-    if(m_songs.empty())
-    {
-        WR << "songs list is empty!";
-        return;
-    }
-    int i=0;
-    bool foundCurrentSong = false;
-    for(const auto &song : m_songs)
-    {
-        ++i;
-        if(song->getID() == currentSongID)
-        {
-            foundCurrentSong = true;
-            break;
-        }
-    }
-
-
-    // for secure
-    if(!foundCurrentSong)
-    {
-        // current song was not found!
-        // in that case just use first song and go cry :<
-        WR << "current song with id =" << currentSongID << "was not found!";
-        return;
-    }
-
-    // now 'i' contains index of the next song
-    // if current song is the last one then just loop playlist
-    if(m_songs.size() == i) i=0;
-
-    Song *nextSong = m_songs[i];
-
-    emit this->newNextSongLoaded(nextSong);
+    // signal is connected to Player's slots
+    emit this->newCurrentSongLoaded(nextSong);
 }
 
 std::vector<int> Playlist::getUniqueRandomNumbers(int count)

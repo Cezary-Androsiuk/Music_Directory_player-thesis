@@ -11,33 +11,13 @@ Page {
     property int delegateHeight: 60
     property int delegateWidth: width
 
-    // property int currentSongIndex: {
-    //     if(Backend.player.currentSong !== null)
-    //         Backend.player.currentSong.id
-    //     else
-    //         -1
-    // }
-    // property int nextSongIndex: {
-    //     if(Backend.player.nextSong !== null)
-    //         Backend.player.nextSong.id
-    //     else
-    //         -1
-    // }
-    // property int songsCount: Backend.playlist.songs.length
-
-    property int currentSongIndex: Backend.player.currentSong.listIndex
-    property int nextSongIndex: Backend.player.nextSong.listIndex
-
-    Connections{
-        target: Backend.player
-        function onCurrentSongChanged(){
-            console.log("current song changed -> " + currentSongIndex)
-        }
-        function onNextSongChanged(){
-            console.log("next song changed -> " + nextSongIndex)
-        }
-
+    property int currentSongIndex: {
+        if(Backend.player.currentSong !== null)
+            Backend.player.currentSong.listIndex
+        else
+            -1
     }
+
     Item{
         Component.onCompleted: {
             // on start load all songs
@@ -47,25 +27,31 @@ Page {
 
     Connections{
         target: Backend
-        function onLoadingSongsInProgress(songsLoaded, filesLoaded, filesTotal){
+        function onLoadingSongsStarted(){
             scrollView.visible = false
-            p_loadingSong.textMessage =
-                    " songs found: " + songsLoaded + ", files loaded: " + filesLoaded + "/" + filesTotal
-            if(!p_loadingSong.opened)
-                p_loadingSong.open()
+            p_loadingSong.textMessage = "Starting the Loading of songs..."
+            p_loadingSong.open()
         }
 
-        function onLoadingSongsFinished(){
+        function onLoadingSongsInProgress(songsLoaded, filesLoaded, filesTotal){
+            p_loadingSong.textMessage
+                    = " songs found: " + songsLoaded + ", files loaded: "
+                    + filesLoaded + "/" + filesTotal
+        }
+
+        function onLoadingSongsFinished(/*do not use songList argument in QML*/){
             scrollView.visible = true
-            p_loadingSong.close()
+            if(p_loadingSong.opened) // will be closed if loading song was protected
+                p_loadingSong.close()
         }
 
-        function onSongsLoadError(desc){
-            p_songsLoadError.open()
-            p_songsLoadError.textDescription = desc
+        function onLoadingSongsError(desc){
+            p_loadingSongsError.open()
+            p_loadingSongsError.textDescription = desc
         }
 
-        function onLoadProtectorLimited(limit){
+        function onLoadingSongsProtected(limit){
+            p_loadingSong.close() // that is better than new popup opens on a popup
             p_protectorLimited.open()
             p_protectorLimited.textMessage = "Loading of songs stopped because "+
                     limit+" files were checked and the limit was reached (Load Protector)"
@@ -79,7 +65,7 @@ Page {
     }
 
     Popup2{
-        id: p_songsLoadError
+        id: p_loadingSongsError
         textMessage: "Can't load Songs!"
         textLB: "Retry"
         textRB: "Ok"
@@ -112,7 +98,7 @@ Page {
 
                 sourceComponent: {
                     if(modelData.listIndex === currentSongIndex)    currentSongComponent
-                    else if(modelData.listIndex === nextSongIndex)     nextSongComponent
+                    // else if(modelData.listIndex === nextSongIndex)     nextSongComponent
                     else                                                   songComponent
                 }
 
@@ -139,28 +125,28 @@ Page {
                     }
                 }
 
-                Component{
-                    id: nextSongComponent // highlight
-                    Item{
-                        ListButtonField{
-                            delegate_text: modelData.title
-                            onUserClickedElement: {
-                                // just_used_id = + modelData.id;
-                                // just_used_title = modelData.title;
-                                console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
-                                // backend.database.loadEditPlaylistSongModel(+modelData.id)
-                            }
-                            onUserClickedPlay: {
-                                // console.log("play: " + modelData.title)
-                            }
-                        }
-                        Rectangle{
-                            anchors.fill: parent
-                            color: root.color_accent2
-                            opacity: 0.3
-                        }
-                    }
-                }
+                // Component{
+                //     id: nextSongComponent // highlight
+                //     Item{
+                //         ListButtonField{
+                //             delegate_text: modelData.title
+                //             onUserClickedElement: {
+                //                 // just_used_id = + modelData.id;
+                //                 // just_used_title = modelData.title;
+                //                 console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
+                //                 // backend.database.loadEditPlaylistSongModel(+modelData.id)
+                //             }
+                //             onUserClickedPlay: {
+                //                 // console.log("play: " + modelData.title)
+                //             }
+                //         }
+                //         Rectangle{
+                //             anchors.fill: parent
+                //             color: root.color_accent2
+                //             opacity: 0.3
+                //         }
+                //     }
+                // }
 
                 Component{
                     id: songComponent

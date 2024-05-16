@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 
 import "qrc:/Music_directory_player/qml/delegates"
+import "qrc:/Music_directory_player/qml/popups"
 
 Item{
     id: pageHeader
@@ -19,7 +20,7 @@ Item{
     property bool showRefreshListButton: Backend.personalization.showRefreshListButton
 
     function refreshClicked(){
-        Backend.rootDirectoryChanged()
+        Backend.loadSongs()
     }
 
     function shuffleClicked(){
@@ -30,6 +31,17 @@ Item{
         mainStackView.push(Qt.resolvedUrl("qrc:/Music_directory_player/qml/pages/Settings.qml"));
     }
 
+    Connections{
+        target: Backend
+        function onLoadingSongsStarted(){
+            refreshField.enabled = false;
+            shuffleField.enabled = false;
+        }
+        function onLoadingSongsFinished(){
+            refreshField.enabled = true;
+            shuffleField.enabled = true;
+        }
+    }
 
     Item{
         id: refreshField
@@ -39,7 +51,7 @@ Item{
             bottom: parent.bottom
         }
         width: height
-
+        // enabled will be controlled by connections (if loading in progress)
         visible: showRefreshListButton
 
         FlatButton{
@@ -61,46 +73,32 @@ Item{
                 else
                     parent.left
             }
-
             right: shuffleField.left
+            leftMargin: 10
+            rightMargin: 10
         }
+        clip: true
 
-        Item{
-            anchors{
-                fill: parent
-                leftMargin: 10
-                rightMargin: 10
+        Text{
+            id: rootDirectoryText
+            width: parent.width
+            height: parent.height
+            x: {
+                // following code makes that text will stop at right site
+                // and start disappearing on the left side
+                var offset = contentWidth - width + 5;
+                if(offset < 0) offset = 0;
+                -offset;
             }
-            clip: true
+            y: 0
 
-            Text{
-                id: __text
-                width: parent.width
-                height: parent.height
-                x: {
-                    var offset = contentWidth - width + 5;
-                    if(offset < 0) offset = 0;
-                    -offset;
-                }
-                y: 0
+            text: localFileRootDirectory
 
-                text: localFileRootDirectory
+            color: root.color_element_idle
+            font.pixelSize: 14
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignLeft
 
-                color: root.color_element_idle
-                font.pixelSize: 14
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
-            }
-            MouseArea{
-                anchors.fill: parent
-                hoverEnabled: true
-
-                ToolTip{
-                    visible: parent.containsMouse && (__text.contentWidth >= __text.width)
-                    text: localFileRootDirectory
-                    delay: 1200
-                }
-            }
             Rectangle{
                 id: endTextMask
                 anchors{
@@ -109,7 +107,7 @@ Item{
                     left: parent.left
                 }
                 width: parent.width * 0.1
-                visible: (__text.contentWidth >= __text.width)
+                visible: (rootDirectoryText.contentWidth >= rootDirectoryText.width)
 
                 gradient: Gradient{
                     orientation: Gradient.Horizontal
@@ -118,7 +116,17 @@ Item{
                 }
             }
         }
+        MouseArea{
+            anchors.fill: parent
+            hoverEnabled: true
 
+            ToolTip{
+                visible: parent.containsMouse &&
+                         (rootDirectoryText.contentWidth >= rootDirectoryText.width)
+                text: localFileRootDirectory
+                delay: 1200
+            }
+        }
     }
 
     Item{
@@ -129,7 +137,7 @@ Item{
             right: optionsField.left
         }
         width: height
-
+        // enabled will be controlled by connections (if loading in progress)
         FlatButton{
             dltDescription: "Shuffle Songs"
             dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/shuffle.png")

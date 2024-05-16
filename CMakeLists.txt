@@ -42,6 +42,7 @@ qt_add_qml_module(appMusic_directory_player
     QML_FILES qml/popups/Popup1.qml
     QML_FILES qml/popups/Popup2.qml
     QML_FILES qml/popups/Popup3.qml
+    QML_FILES qml/popups/PopupLoading.qml
 
     QML_FILES qml/pages/MainPage.qml
     QML_FILES qml/pages/Settings.qml
@@ -54,8 +55,6 @@ qt_add_qml_module(appMusic_directory_player
     RESOURCES assets/icons/left_arrow.png
     RESOURCES assets/icons/folder.png
     RESOURCES assets/icons/opened_folder.png
-    QML_FILES qml/popups/PopupLoading.qml
-    SOURCES cpp/PlayerQueue/PlayerQueue.h cpp/PlayerQueue/PlayerQueue.cpp
 
     # RESOURCES assets/icons/player/end.png
     # RESOURCES assets/icons/player/pause.png

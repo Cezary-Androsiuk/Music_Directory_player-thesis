@@ -9,7 +9,6 @@ Personalization::Personalization(QObject *parent)
     m_rootDirectory(DEFAULT_ROOT_DIRECTORY),
     m_showTooltips(DEFAULT_SHOW_TOOLTIPS),
     m_songExtensions(DEFAULT_SONG_EXTENSIONS),
-    m_songTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS),
     m_loadProtector(DEFAULT_LOAD_PROTECTOR),
     m_showRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON)
 {
@@ -31,7 +30,6 @@ void Personalization::printValues() const
     DB << "\trootDirectory: " << m_rootDirectory;
     DB << "\tshowTooltips: " << m_showTooltips;
     DB << "\tsongExtensions: " << m_songExtensions;
-    DB << "\tsongTransitionTimeMS: " << m_songTransitionTimeMS;
     DB << "\tloadProtector: " << m_loadProtector;
     DB << "\tshowRefreshListButton: " << m_showRefreshListButton;
 #endif
@@ -47,7 +45,6 @@ void Personalization::setDefaultPersonalizationData()
     this->setRootDirectory(DEFAULT_ROOT_DIRECTORY);
     this->setShowTooltips(DEFAULT_SHOW_TOOLTIPS);
     this->setSongExtensions(DEFAULT_SONG_EXTENSIONS);
-    this->setSongTransitionTimeMS(DEFAULT_SONG_TRANSITION_TIME_MS);
     this->setLoadProtector(DEFAULT_LOAD_PROTECTOR);
     this->setShowRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON);
 
@@ -113,9 +110,6 @@ void Personalization::loadPersonalizationFromJson()
     key = "song extensions";
     CHECK_KEY(this->setSongExtensions(jp[key].toString()))
 
-    key = "song transition time (ms)";
-    CHECK_KEY(this->setSongTransitionTimeMS(jp[key].toInt()))
-
     key = "load protector";
     CHECK_KEY(this->setLoadProtector(jp[key].toInt()))
 
@@ -161,7 +155,6 @@ void Personalization::savePersonalizationToJson()
     json_object["root directory"] = this->getRootDirectory().toString();
     json_object["show tooltips"] = this->getShowTooltips();
     json_object["song extensions"] = this->getSongExtensions();
-    json_object["song transition time (ms)"] = this->getSongTransitionTimeMS();
     json_object["load protector"] = this->getLoadProtector();
     json_object["show refresh list button"] = this->getShowRefreshListButton();
 
@@ -214,11 +207,6 @@ bool Personalization::getShowTooltips() const
 QString Personalization::getSongExtensions() const
 {
     return m_songExtensions;
-}
-
-int Personalization::getSongTransitionTimeMS() const
-{
-    return m_songTransitionTimeMS;
 }
 
 int Personalization::getLoadProtector() const
@@ -284,19 +272,6 @@ void Personalization::setSongExtensions(const QString &songExtensions)
 
     m_songExtensions = songExtensions;
     emit this->songExtensionsChanged(m_songExtensions);
-}
-
-void Personalization::setSongTransitionTimeMS(int songTransitionTimeMS)
-{
-    if(m_songTransitionTimeMS == songTransitionTimeMS) // removes binding loop in qml
-        return;
-
-    if(songTransitionTimeMS < 0){
-        WR << "Trying to set negative time in songTransitionTime!";
-        songTransitionTimeMS = 0;
-    }
-    m_songTransitionTimeMS = songTransitionTimeMS;
-    emit this->songTransitionTimeMSChanged();
 }
 
 void Personalization::setLoadProtector(int loadProtector)
