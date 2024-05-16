@@ -17,7 +17,7 @@ qt_add_qml_module(appMusic_directory_player
     VERSION 1.0
 
     SOURCES cpp/Backend/Backend.h cpp/Backend/Backend.cpp
-    SOURCES cpp/DebugPrint.h
+    SOURCES cpp/DebugPrint.h cpp/DebugPrint.cpp
     SOURCES cpp/Song/Song.h cpp/Song/Song.cpp
     SOURCES cpp/Personalization/Personalization.h cpp/Personalization/Personalization.cpp
     SOURCES cpp/Player/Player.h cpp/Player/Player.cpp

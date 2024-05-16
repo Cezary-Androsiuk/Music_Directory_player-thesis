@@ -5,7 +5,15 @@ Song::Song(QObject *parent)
     m_title(""),
     m_listIndex(-1),
     m_ID(0)
-{}
+{
+
+    LFL("Song instance                 %1 created");
+}
+
+Song::~Song()
+{
+    LFL("Song instance                 %1 destroyed");
+}
 
 int Song::getID() const
 {

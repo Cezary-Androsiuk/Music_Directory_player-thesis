@@ -50,6 +50,7 @@ Page {
         }
 
         function onLoadingSongsProtected(limit){
+            // popup will be closed twice if loading song protector occur
             p_loadingSong.close() // that is better than new popup opens on a popup
             p_protectorLimited.open()
             p_protectorLimited.textMessage = "Loading of songs stopped because "+

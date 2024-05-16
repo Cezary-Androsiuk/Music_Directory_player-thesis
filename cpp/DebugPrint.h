@@ -4,8 +4,6 @@
 #include <QDebug>
 #include <QString>
 
-#include <QFile>
-#include <QTextStream>
 
 #define PRETTY_FUNC true
 #define MULTI_LINE false
@@ -44,6 +42,8 @@
 // later, in addition, you can add saving the information passed to the DB in the log file and add a class for QML to make it work instead of console.log
 
 
+// #include <QFile>
+// #include <QTextStream>
 // void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 // {
 //     QFile logFile("log.txt");
@@ -61,5 +61,18 @@
 //     QTextStream terminalStream(stdout);
 //     terminalStream << msg << "\n";
 // }
+
+
+#define ENABLE_LIFE_CYCLE_LOG true
+#define PRINT_LIFE_CYCLE_LOG false
+#if ENABLE_LIFE_CYCLE_LOG
+#define LFL(x) lifeCycleLog(QString(__PRETTY_FUNCTION__), QString(x).arg((uintptr_t)this));
+#else
+#define LFL(x) ;
+#endif
+
+#include <QFile>
+#include <QTextStream>
+void lifeCycleLog(QString func, QString data);
 
 #endif // DEBUGPRINT_H

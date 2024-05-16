@@ -4,12 +4,12 @@ Player::Player(QObject *parent)
     : QObject{parent},
     m_currentSong(nullptr)
 {
-
+    LFL("Player instance               %1 created");
 }
 
 Player::~Player()
 {
-
+    LFL("Player instance               %1 destroyed");
 }
 
 void Player::initialize()

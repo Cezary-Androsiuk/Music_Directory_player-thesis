@@ -15,6 +15,7 @@ class Song : public QObject
     Q_PROPERTY(QString title    READ getTitle           CONSTANT FINAL)
 public:
     explicit Song(QObject *parent = nullptr);
+    ~Song();
 
     int getID() const;
     int getListIndex() const;

@@ -12,6 +12,7 @@ Personalization::Personalization(QObject *parent)
     m_loadProtector(DEFAULT_LOAD_PROTECTOR),
     m_showRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON)
 {
+    LFL("Personalization instance      %1 created");
     // WR << "REMOVING PERSONALIZATIONS";
     // QFile::remove(PERSONALIZATIONS_JSON_PATH);
 }
@@ -19,6 +20,7 @@ Personalization::Personalization(QObject *parent)
 Personalization::~Personalization()
 {
 
+    LFL("Personalization instance      %1 destroyed");
 }
 
 void Personalization::printValues() const

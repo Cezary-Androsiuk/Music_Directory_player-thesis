@@ -4,6 +4,7 @@ Playlist::Playlist(QObject *parent)
     : QObject{parent},
     m_playlistInitialized(false)
 {
+    LFL("Playlist instance             %1 created");
     /// connect sub signals to signal
     QObject::connect(this, &Playlist::songsLoaded, this, &Playlist::songsChanged);
     QObject::connect(this, &Playlist::songsShuffled, this, &Playlist::songsChanged);
@@ -11,7 +12,7 @@ Playlist::Playlist(QObject *parent)
 
 Playlist::~Playlist()
 {
-
+    LFL("Playlist instance             %1 destroyed");
 }
 
 SongList Playlist::getSongs() const
