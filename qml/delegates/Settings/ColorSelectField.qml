@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Dialogs
 
+import "qrc:/Music_directory_player/qml/delegates/Settings/Common" // LeftText
+
 Item{
     id: colorSelectField
     anchors.fill: parent
@@ -17,11 +19,12 @@ Item{
     //      and thats wokrs and when app_theme (that responds for a color_accent2)
     //      is changed accent2 color is also changed
 
-    LeftTextInList{
+    LeftText{
         id: textElement
         dltAnchorRight: textRightElement.left
         dltRightMargin: 10
         dltText: parent.dltText
+        dltDesc: parent.dltDesc
     }
 
     Item{

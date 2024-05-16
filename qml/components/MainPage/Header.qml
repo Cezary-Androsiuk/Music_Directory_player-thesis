@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
-import "qrc:/Music_directory_player/qml/delegates"
+import "qrc:/Music_directory_player/qml/components"
 import "qrc:/Music_directory_player/qml/popups"
 
 Item{
@@ -54,7 +54,7 @@ Item{
         // enabled will be controlled by connections (if loading in progress)
         visible: showRefreshListButton
 
-        FlatButton{
+        ImageButton{
             dltDescription: "Refresh List"
             dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/refresh.png")
             dltImageHover: dltImageIdle
@@ -138,7 +138,7 @@ Item{
         }
         width: height
         // enabled will be controlled by connections (if loading in progress)
-        FlatButton{
+        ImageButton{
             dltDescription: "Shuffle Songs"
             dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/shuffle.png")
             dltImageHover: dltImageIdle
@@ -154,7 +154,7 @@ Item{
             bottom: parent.bottom
         }
         width: height //* 2
-        FlatButton{
+        ImageButton{
             dltDescription: "Settings"
             dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/settings.png")
             dltImageHover: dltImageIdle
@@ -162,5 +162,5 @@ Item{
         }
     }
 
-    LongSeparator{ anchors.bottom: parent.bottom }
+    ThinSeparator{ anchors.bottom: parent.bottom }
 }

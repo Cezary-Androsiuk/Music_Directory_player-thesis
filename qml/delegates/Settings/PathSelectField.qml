@@ -4,6 +4,9 @@ import QtQuick.Controls.Material
 import QtQuick.Dialogs
 import Qt5Compat.GraphicalEffects
 
+import "qrc:/Music_directory_player/qml/delegates/Settings/Common" // LeftText
+import "qrc:/Music_directory_player/qml/components" // ImageButton
+
 Item {
     id: pathSelectField
     anchors.fill: parent
@@ -12,11 +15,12 @@ Item {
     property string dltDesc: ""
     required property var dltValue
 
-    LeftTextInList{
+    LeftText{
         id: textElement
         dltAnchorRight: textRightElement.left
         dltRightMargin: 15
         dltText: parent.dltText
+        dltDesc: parent.dltDesc
     }
 
     Item{
@@ -41,7 +45,7 @@ Item {
             // height: folderDialogText.height
             width: height //* 0.7
 
-            FlatButton{
+            ImageButton{
                 dltDescription: "Select " + dltText
                 dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")//Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/folder.png")
                 dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/opened_folder.png")

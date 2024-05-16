@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/delegates/Settings/Common" // LeftText
+
 Item{
     id: integerField
     anchors.fill: parent
@@ -11,11 +13,12 @@ Item{
     property var dltValue: null
     property bool dltEnabled: true
 
-    LeftTextInList{
+    LeftText{
         id: textElement
         dltAnchorRight: textRightElement.left
         dltRightMargin: 10
         dltText: parent.dltText
+        dltDesc: parent.dltDesc
     }
 
     Item{

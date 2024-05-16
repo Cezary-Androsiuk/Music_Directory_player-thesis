@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/components" // InfoField
+
 Item {
     // can be used as extension for delegates where text is pinned to the left site and the longer ones can
     //     go out from the right site
@@ -14,6 +16,7 @@ Item {
     }
 
     property string dltText: ""
+    property string dltDesc: ""
     property int dltPixelSize: 15
     required property var dltAnchorRight
     property int dltRightMargin: 10
@@ -49,6 +52,18 @@ Item {
                 visible: parent.containsMouse && (text.contentWidth >= text.width)
                 text: dltText
                 delay: 1200
+            }
+        }
+        // InfoField need to override above MouseArea
+        Item{
+            id: infoFieldArea
+            anchors.verticalCenter: parent.verticalCenter
+            x: text.contentWidth + text.x + /*leftMargin*/ 5
+            width: 26 // decides about infoField size
+            height: width
+            visible: dltDesc !== ""
+            InfoToolTip{
+                dltDescription: dltDesc
             }
         }
         Rectangle{

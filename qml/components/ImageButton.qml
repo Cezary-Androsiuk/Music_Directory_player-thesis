@@ -23,27 +23,29 @@ Item{
         colorOverlay.color = dltIdleColor
     }
 
-    property bool msDown: false
-
     signal userClicked()
-
     Image{
         id: img
         fillMode: Image.PreserveAspectFit
         anchors{
             fill: parent
             margins: {
-                var pw = parent.width * 0.20
-                var ph = parent.height * 0.20
-                if(pw < ph)
-                    pw
-                else
-                    ph
+                var pw = parent.width * 0.20;
+                var ph = parent.height * 0.20;
+
+                (pw < ph) ? pw : ph;
             }
         }
+        mipmap: true // smooths image
 
         source: dltImageIdle
     }
+    // Rectangle{
+    //     id: imageAreaBorders
+    //     color: "red"
+    //     anchors.fill: img
+    //     opacity: 0.2
+    // }
 
     ColorOverlay {
         id: colorOverlay
@@ -52,28 +54,41 @@ Item{
         color: dltIdleColor
     }
 
+
+    // below mouse area need to be copied to every component that emulate button
+    // extracting it to the new component might now workout
     MouseArea{
         id: msArea
         anchors.fill: parent
         hoverEnabled: true
 
+        // following code is emulating button fine and don't need any changes
         onEntered: {
+            // change image to hover
             img.source = dltImageHover;
-            colorOverlay.color = dltHoverColor
-            msDown = msArea.containsMouse
+
+            // change color to hover or to press color, if following action happend:
+            // button was pressed, left area, and enter area again (constantly being pressed)
+            colorOverlay.color = msArea.containsPress ? dltPressColor : dltHoverColor
         }
         onExited: {
+            // change image to idle
             img.source = dltImageIdle;
+
+            // change color to idle
             colorOverlay.color = dltIdleColor
-            msDown = false
         }
         onPressed: {
+            // change color to press
             colorOverlay.color = dltPressColor
-            msDown = true
         }
         onReleased: {
+            // change color to hover if mouse was relesed on area or if was relesed
+            //     outside area to the idle color
             colorOverlay.color = msArea.containsMouse ? dltHoverColor : dltIdleColor
-            if(msDown === true)
+
+            // if was relesed, still containing the mouse activate click
+            if(msArea.containsMouse)
                 userClicked()
         }
 
@@ -81,7 +96,6 @@ Item{
             visible: msArea.containsMouse && Backend.personalization.showTooltips
             text: dltDescription
             delay: 1200
-
         }
     }
 

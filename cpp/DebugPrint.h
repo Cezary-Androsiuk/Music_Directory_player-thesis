@@ -63,7 +63,7 @@
 // }
 
 
-#define ENABLE_LIFE_CYCLE_LOG true
+#define ENABLE_LIFE_CYCLE_LOG false
 #define PRINT_LIFE_CYCLE_LOG false
 #if ENABLE_LIFE_CYCLE_LOG
 #define LFL(x) lifeCycleLog(QString(__PRETTY_FUNCTION__), QString(x).arg((uintptr_t)this));

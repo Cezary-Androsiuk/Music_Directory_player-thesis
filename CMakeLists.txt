@@ -25,36 +25,40 @@ qt_add_qml_module(appMusic_directory_player
 
     QML_FILES qml/Main.qml
 
-    QML_FILES qml/components/LongSeparator.qml
-    QML_FILES qml/components/ScrollCurrentSongMarker.qml
-    QML_FILES qml/components/MainPageHeader.qml
-    QML_FILES qml/components/MainPageFooter.qml
+    QML_FILES qml/pages/MainPage.qml
+    QML_FILES qml/pages/Settings.qml
 
-    QML_FILES qml/delegates/ListButtonField.qml
-    QML_FILES qml/delegates/LeftTextInList.qml
-    QML_FILES qml/delegates/FlatButton.qml
-    QML_FILES qml/delegates/ColorSelectField.qml
-    QML_FILES qml/delegates/PathSelectField.qml
-    QML_FILES qml/delegates/StringField.qml
-    QML_FILES qml/delegates/SwitchField.qml
-    QML_FILES qml/delegates/IntegerField.qml
+    QML_FILES qml/components/ThinSeparator.qml
+    QML_FILES qml/components/ImageButton.qml
+    QML_FILES qml/components/InfoToolTip.qml
+    QML_FILES qml/components/MainPage/Header.qml
+    QML_FILES qml/components/MainPage/Footer.qml
+    QML_FILES qml/components/MainPage/Player.qml
+    QML_FILES qml/components/MainPage/ScrollCurrentSongMarker.qml
+    # QML_FILES qml/components/MainPage/Player/
+    # QML_FILES qml/components/Settings/
+
+    QML_FILES qml/delegates/MainPage/SongField.qml
+    QML_FILES qml/delegates/Settings/ColorSelectField.qml
+    QML_FILES qml/delegates/Settings/IntegerField.qml
+    QML_FILES qml/delegates/Settings/PathSelectField.qml
+    QML_FILES qml/delegates/Settings/StringField.qml
+    QML_FILES qml/delegates/Settings/SwitchField.qml
+    QML_FILES qml/delegates/Settings/Common/LeftText.qml
 
     QML_FILES qml/popups/Popup1.qml
     QML_FILES qml/popups/Popup2.qml
     QML_FILES qml/popups/Popup3.qml
     QML_FILES qml/popups/PopupLoading.qml
 
-    QML_FILES qml/pages/MainPage.qml
-    QML_FILES qml/pages/Settings.qml
-    QML_FILES qml/pages/Player.qml
-
     RESOURCES assets/icons/refresh.png
     RESOURCES assets/icons/settings.png
     RESOURCES assets/icons/shuffle.png
     RESOURCES assets/icons/arrows_long_left.png
     RESOURCES assets/icons/left_arrow.png
-    RESOURCES assets/icons/folder.png
+    # RESOURCES assets/icons/folder.png
     RESOURCES assets/icons/opened_folder.png
+    RESOURCES assets/icons/info.png
 
     # RESOURCES assets/icons/player/end.png
     # RESOURCES assets/icons/player/pause.png

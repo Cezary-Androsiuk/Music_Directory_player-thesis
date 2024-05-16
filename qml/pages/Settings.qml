@@ -2,7 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
-import "qrc:/Music_directory_player/qml/delegates"
+import "qrc:/Music_directory_player/qml/components"
+import "qrc:/Music_directory_player/qml/delegates/Settings"
 import "qrc:/Music_directory_player/qml/popups"
 
 Page {
@@ -13,7 +14,7 @@ Page {
         {id: 300, name: "Songs Path", delegate_type: "select path", desc: ""},
         {id: 400, name: "Show Tooltips", delegate_type: "switch", desc: ""},
         {id: 500, name: "Songs Extenstions", delegate_type: "string", desc: ""},
-        {id: 700, name: "Load Protector", delegate_type: "integer", desc: ""},
+        {id: 700, name: "Load Protector", delegate_type: "integer", desc: "info"},
         {id: 800, name: "Show Refresh List Button", delegate_type: "switch", desc: ""},
     ]
     property int delegateHeight: 60
@@ -40,7 +41,7 @@ Page {
                 bottom: parent.bottom
             }
             width: height*2
-            FlatButton{
+            ImageButton{
                 dltDescription: "Go Back"
                 dltImageIdle: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/left_arrow.png")
                 dltImageHover: Qt.resolvedUrl("qrc:/Music_directory_player/assets/icons/left_arrow.png")

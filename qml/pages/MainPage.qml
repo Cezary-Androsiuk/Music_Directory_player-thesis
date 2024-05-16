@@ -2,8 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
-import "qrc:/Music_directory_player/qml/components"
-import "qrc:/Music_directory_player/qml/delegates"
+import "qrc:/Music_directory_player/qml/components/MainPage"
+import "qrc:/Music_directory_player/qml/delegates/MainPage"
 import "qrc:/Music_directory_player/qml/popups"
 
 Page {
@@ -80,7 +80,7 @@ Page {
         jea: true
     }
 
-    header: MainPageHeader{}
+    header: Header{}
 
     ScrollView{
         id: scrollView
@@ -105,7 +105,7 @@ Page {
                 Component{
                     id: currentSongComponent // highlight
                     Item{
-                        ListButtonField{
+                        SongField{
                             delegate_text: modelData.title
                             onUserClickedElement: {
                                 // just_used_id = + modelData.id;
@@ -128,7 +128,7 @@ Page {
                 // Component{
                 //     id: nextSongComponent // highlight
                 //     Item{
-                //         ListButtonField{
+                //         SongField{
                 //             delegate_text: modelData.title
                 //             onUserClickedElement: {
                 //                 // just_used_id = + modelData.id;
@@ -151,7 +151,7 @@ Page {
                 Component{
                     id: songComponent
                     Item{
-                        ListButtonField{
+                        SongField{
                             delegate_text: modelData.title
                             onUserClickedElement: {
                                 // just_used_id = + modelData.id;
@@ -182,5 +182,5 @@ Page {
         dltVisible: scrollView.contentHeight > scrollView.height
     }
 
-    footer: MainPageFooter{}
+    footer: Footer{}
 }

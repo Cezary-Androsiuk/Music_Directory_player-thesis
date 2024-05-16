@@ -4,23 +4,27 @@ NONE - dodać robienie struktury katalogu po za inicjalizacją (po zmianie ście
 DONE - dodać zapisywanie rozszerzeń plików muzycznych 
 NONE ? dodać zapisywanie rozszerzeń plików ikonek
 NONE - ustawić budowanie struktury zależnie od muzyk (tam gdzie nie ma muzyki ignoruj)
-- poprawić kolor na przyciskach popup (żeby się aktualizował)
-? sprowadzić pupupy do wspólnego mianownika (przyciski wyodrębnić w komponenty)
 DONE - sprawdzić co się dzieje po kliknięciu po za popup (gdy nie jest to popup informacyjny lub potwierdzenia)
 DONE ? ustawić żeby rootDirectory się przesuwał w lewo, gdy długość tekstu przekroczy długość pola w jakim się znajduje
-- utworzyć player
+DONE - utworzyć player
 DONE - zależnie od playera wyświetlać obecną i następną piosenkę
-- komunikacja player <-> playlist
+DONE - uporządkować "delegates" i utworzyć folder z "components" specjalnie dla "delegates"
+DONE - sprowadzić "delegates" do wspólnego mianownika wyłączając tekst jako oddzielny komponent
+NONE - przenieść rootDirectoryText z MainPageHeader do oddzielnego "delegate" 
+DONE - ogarnąć te listButtonField leftTextInList żeby mnie nie irytowały nazwami np ButtonField bardziej wymowne 
+DONE - przenieść FlatButton do "components"
+DONE - podzielić "delegates" na "delegatesSettingsPage" oraz "delegatesMainPage"
+DONE - dodać life cycle log instancji klas
+DONE - naprawić bug z ładowaniem piosenek
+NONE ? dodać tworzenie ścieżki ale z możliwą ekspansją na tworzenie logów (początek i koniec każdej funkcji)
+? sprowadzić pupupy do wspólnego mianownika (przyciski wyodrębnić w komponenty)
 ? można zmienić komunikację backend/popups, nie tylko przesyłać desc ale errorCode (który może być interpretowany przez qml) a desc był by ukryty i trzeba rozwinąć
-- uporządkować "delegates" i utworzyć folder z "components" specjalnie dla "delegates"
-- sprowadzić "delegates" do wspólnego mianownika wyłączając tekst jako oddzielny komponent
-- dodać desc(opis) dla zmiennych po najechaniu kursorem
-- przenieść rootDirectoryText z MainPageHeader do oddzielnego "delegate" 
-- ogarnąć te listButtonField leftTextInList żeby mnie nie irytowały nazwami np ButtonField bardziej wymowne 
-- przenieść FlatButton do "components"
-- podzielić "delegates" na "delegatesSettingsPage" oraz "delegatesMainPage"
-- dodaj tworzenie ścieżki ale z możliwą ekspansją na tworzenie logów
-- naprawić bug z ładowaniem piosenek
+DONE dodać desc(opis) dla zmiennych po najechaniu kursorem
+- dodać treść dla desc zmiennych w settings
+- zmienić rozdzielczość ikon żeby pasowały do wyświetlanej rozdzielczości (skalowanie w QML nie działa dobrze XD)
+- dopasowac InfoToolTip do tekstu tak żeby dobrze wyglądał
+- komunikacja player <-> playlist
+- poprawić kolor na przyciskach popup (żeby się aktualizował)
 
 
 
