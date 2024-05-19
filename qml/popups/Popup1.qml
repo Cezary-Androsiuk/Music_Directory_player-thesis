@@ -2,20 +2,30 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/components" // BetterButton
+import "qrc:/Music_directory_player/qml/popups/common" // TextsArea
+
 Popup {
     id: popup1
-    property string textMessage: "no message has been set"
-    property string textDescription: ""
+    property string dltText: "no message has been set"
+    property string dltDesc: ""
 
-    property string textMB: "Ok" // middle button text
 
-    property int fontSizeMB: 17 // middle button font size
+    // - LB
+    property string dltTextMB: "MB" // middle button text
+    // - RB
 
-    property bool jea: true // just exit action
+    // - LB
+    property int dltFontSizeMB: 14 // middle button font size
+    // - RB
 
-    signal clickedMB() // clicked middle button
+    property bool dltJea: true // just exit action
 
-    property bool noDesc: (textDescription === "")
+    // - LB
+    signal dltClickedMB() // clicked middle button
+    // - RB
+
+    readonly property bool noDesc: (dltDesc === "")
 
     height: noDesc ? 160 : 240
     width: 310
@@ -23,9 +33,14 @@ Popup {
     x: root._w/2 - width/2
     y: (root._h/2 - height/4) - height/2
 
+    // background: Rectangle {
+    //     color: root.color_background
+    //     radius: 10
+    // }
+
     dim: true
     modal: true
-    closePolicy: jea ?
+    closePolicy: dltJea ?
                      Popup.CloseOnEscape | Popup.CloseOnPressOutside :
                      Popup.NoAutoClose
 
@@ -34,7 +49,7 @@ Popup {
             popup1.focus = true
         }
         Keys.onEscapePressed: {
-            if(jea)
+            if(dltJea)
                 popup1.close()
             else
                 root.close()
@@ -42,87 +57,17 @@ Popup {
     }
 
     Item{
+        id: globArea
         anchors{
             fill: parent
             topMargin: noDesc ? 0 : -10
             bottomMargin: noDesc ? 0 : -10
         }
 
-        Item{
+        TextsArea{
             id: areaTexts
-            anchors{
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            height: parent.height * 3/5
-
-            Item{
-                id: areaMessage
-                anchors{
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                }
-                height: noDesc ? parent.height : parent.height * 3/6
-
-                Text{
-                    id: message
-                    anchors.centerIn: parent
-                    text: textMessage
-                    clip: true
-                    font.pixelSize: 14
-                    color: root.color_accent1
-                    width: popup1.width - 50
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                }
-            }
-            Item{
-                id: areaDescription
-                anchors{
-                    top: areaMessage.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                }
-
-                visible: !noDesc
-
-                Rectangle{
-                    anchors.fill: parent
-                    color: "white"
-                    opacity: 0.05
-                }
-
-                Text{
-                    anchors{
-                        top: parent.top
-                        left: parent.left
-                        right: parent.right
-                    }
-                    text: "Description"
-                    color: root.color_accent1
-                    font.pixelSize: 10
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Text{
-                    anchors{
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                        topMargin: 15
-                    }
-
-                    text: textDescription
-                    color: root.color_accent1
-                    wrapMode: Text.Wrap
-                    clip: true
-                    font.pixelSize: 9
-                }
-            }
-
+            dltText: popup1.dltText
+            dltDesc: popup1.dltDesc
         }
 
         Item{
@@ -134,33 +79,25 @@ Popup {
                 bottom: parent.bottom
             }
 
-
             Item{
                 id: areaMB
-                anchors.fill: parent
+                anchors.centerIn: parent
+                height: 46
+                width: 80
 
-                Rectangle{
-                    anchors.fill: buttonL
-
-                    color: "transparent"
-                    border.color: root.color_accent1
-                    border.width: 1
-                    opacity: 0.4
-                }
-                TabButton{
-                    id: buttonL
-                    anchors.centerIn: parent
-
-                    text: textMB
-                    font.pixelSize: fontSizeMB
-                    onClicked: {
+                BetterButton{
+                    id: buttonM
+                    dltText: dltTextMB
+                    dltFontSize: dltFontSizeMB
+                    dltBorderVisible: true
+                    dltUsePopupColor: true
+                    onUserClicked:{
                         popup1.close();
-                        clickedMB();
+                        dltClickedMB();
                     }
-
-                    width: 100
                 }
             }
+
         }
 
     }

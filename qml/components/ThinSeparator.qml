@@ -12,6 +12,6 @@ Item {
     Rectangle{
         anchors.fill: parent
         opacity: 0.3
-        color: root.color_accent1
+        color: root.color_accent2
     }
 }

@@ -4,7 +4,7 @@ import QtQuick.Controls.Material
 import Qt5Compat.GraphicalEffects
 
 Item{
-    id: infoField
+    id: infoToolTip
     anchors.fill: parent
 
     required property string dltDescription

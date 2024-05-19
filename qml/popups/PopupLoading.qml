@@ -2,17 +2,26 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/components" // BetterButton
+import "qrc:/Music_directory_player/qml/popups/common" // TextsArea
+
 Popup {
     id: popupLoading
-    property string textMessage: "no message has been set"
-    property string textProgress: "" // "13/21"
-    property int textFontSize: 12
+    property string dltText: "no message has been set"
+    property string dltTextProgress: "" // "13/21"
+    property int dltTextFontSize: 12
 
-    property string textMB: "Cancel" // middle button text
+    // - LB
+    property string dltTextMB: "Cancel" // middle button text
+    // - RB
 
-    property int fontSizeMB: 17 // middle button font size
+    // - LB
+    property int dltFontSizeMB: 17 // middle button font size
+    // - RB
 
-    signal clickedMB() // clicked middle button
+    // - LB
+    signal dltClickedMB() // clicked middle button
+    // - RB
 
     height: 160
     width: 310
@@ -25,39 +34,8 @@ Popup {
     closePolicy: Popup.NoAutoClose
 
     Item{
+        id: globArea
         anchors.fill: parent
-
-        // Item{
-        //     id: areaTexts
-        //     anchors{
-        //         top: parent.top
-        //         left: parent.left
-        //         right: parent.right
-        //     }
-        //     height: parent.height * 3/5
-
-        //     Item{
-        //         id: areaMessage
-        //         anchors{
-        //             top: parent.top
-        //             left: parent.left
-        //             right: parent.right
-        //         }
-        //         height: parent.height
-
-        //         Text{
-        //             id: message
-        //             anchors.centerIn: parent
-        //             text: textMessage
-        //             clip: true
-        //             font.pixelSize: 14
-        //             color: root.color_accent1
-        //             width: popupLoading.width - 50
-        //             wrapMode: Text.Wrap
-        //             horizontalAlignment: Text.AlignHCenter
-        //         }
-        //     }
-        // }
 
         Item{
             id: areaBusyIndicator
@@ -84,9 +62,9 @@ Popup {
                     horizontalCenter: bi.horizontalCenter
                     top: bi.bottom
                 }
-                text: textMessage + textProgress
+                text: dltText + dltTextProgress
                 color: root.color_accent1
-                font.pixelSize: textFontSize
+                font.pixelSize: dltTextFontSize
             }
         }
 
@@ -101,30 +79,23 @@ Popup {
 
             Item{
                 id: areaMB
-                anchors.fill: parent
+                anchors.centerIn: parent
+                height: 46
+                width: 80
 
-                Rectangle{
-                    anchors.fill: buttonL
-
-                    color: "transparent"
-                    border.color: root.color_accent1
-                    border.width: 1
-                    opacity: 0.4
-                }
-                TabButton{
-                    id: buttonL
-                    anchors.centerIn: parent
-
-                    text: textMB
-                    font.pixelSize: fontSizeMB
-                    onClicked: {
-                        popupLoading.close();
-                        clickedMB();
+                BetterButton{
+                    id: buttonM
+                    dltText: popupLoading.dltTextMB
+                    dltFontSize: popupLoading.dltFontSizeMB
+                    dltBorderVisible: true
+                    dltUsePopupColor: true
+                    onUserClicked:{
+                        popup1.close();
+                        dltClickedMB();
                     }
-
-                    width: 100
                 }
             }
+
         }
 
     }

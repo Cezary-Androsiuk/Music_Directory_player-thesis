@@ -4,7 +4,7 @@ import QtQuick.Controls.Material
 import Qt5Compat.GraphicalEffects
 
 Item{
-    id: deleteButton
+    id: imageButton
     anchors.fill: parent
 
     required property string dltDescription
@@ -89,7 +89,7 @@ Item{
         ToolTip{
             visible: msArea.containsMouse && Backend.personalization.showTooltips
             text: dltDescription
-            delay: 1200
+            delay: 800
         }
     }
 

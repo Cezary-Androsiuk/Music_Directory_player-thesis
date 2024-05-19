@@ -29,12 +29,12 @@ Page {
         target: Backend
         function onLoadingSongsStarted(){
             scrollView.visible = false
-            p_loadingSong.textMessage = "Starting the Loading of songs..."
+            p_loadingSong.dltText = "Starting the Loading of songs..."
             p_loadingSong.open()
         }
 
         function onLoadingSongsInProgress(songsLoaded, filesLoaded, filesTotal){
-            p_loadingSong.textMessage
+            p_loadingSong.dltText
                     = " songs found: " + songsLoaded + ", files loaded: "
                     + filesLoaded + "/" + filesTotal
         }
@@ -53,31 +53,31 @@ Page {
             // popup will be closed twice if loading song protector occur
             p_loadingSong.close() // that is better than new popup opens on a popup
             p_protectorLimited.open()
-            p_protectorLimited.textMessage = "Loading of songs stopped because "+
+            p_protectorLimited.dltText = "Loading of songs stopped because "+
                     limit+" files were checked and the limit was reached (Load Protector)"
         }
     }
 
     PopupLoading{
         id: p_loadingSong
-        textMessage: "loading songs"
-        onClickedMB: Backend.cancelLoadingSongs()
+        dltText: "loading songs"
+        onDltClickedMB: Backend.cancelLoadingSongs()
     }
 
     Popup2{
         id: p_loadingSongsError
-        textMessage: "Can't load Songs!"
-        textLB: "Retry"
-        textRB: "Ok"
-        jea: true
+        dltText: "Can't load Songs!"
+        dltTextLB: "Retry"
+        dltTextRB: "Ok"
+        dltJea: true
 
-        onClickedLB: Backend.loadSongs()
+        onDltClickedLB: Backend.loadSongs()
     }
 
     Popup1{
         id: p_protectorLimited
-        textMB: "Ok"
-        jea: true
+        dltTextMB: "Ok"
+        dltJea: true
     }
 
     header: Header{}

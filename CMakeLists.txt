@@ -31,6 +31,7 @@ qt_add_qml_module(appMusic_directory_player
     QML_FILES qml/components/ThinSeparator.qml
     QML_FILES qml/components/ImageButton.qml
     QML_FILES qml/components/InfoToolTip.qml
+    QML_FILES qml/components/BetterButton.qml
     QML_FILES qml/components/MainPage/Header.qml
     QML_FILES qml/components/MainPage/Footer.qml
     QML_FILES qml/components/MainPage/Player.qml
@@ -50,6 +51,7 @@ qt_add_qml_module(appMusic_directory_player
     QML_FILES qml/popups/Popup2.qml
     QML_FILES qml/popups/Popup3.qml
     QML_FILES qml/popups/PopupLoading.qml
+    QML_FILES qml/popups/common/TextsArea.qml
 
     RESOURCES assets/icons/refresh.png
     RESOURCES assets/icons/settings.png

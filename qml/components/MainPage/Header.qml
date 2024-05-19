@@ -20,7 +20,7 @@ Item{
     property bool showRefreshListButton: Backend.personalization.showRefreshListButton
 
     function refreshClicked(){
-        Backend.loadSongs()
+        p_confirmRefresh.open();
     }
 
     function shuffleClicked(){
@@ -29,6 +29,15 @@ Item{
 
     function settingsClicked(){
         mainStackView.push(Qt.resolvedUrl("qrc:/Music_directory_player/qml/pages/Settings.qml"));
+    }
+
+    Popup2{
+        id: p_confirmRefresh
+        dltText: "Are you sure to reload songs? This will stop song and reset player."
+        dltTextLB: "Cancel"
+        dltTextRB: "Reload"
+
+        onDltClickedRB: Backend.loadSongs()
     }
 
     Connections{
@@ -94,7 +103,7 @@ Item{
 
             text: localFileRootDirectory
 
-            color: root.color_element_idle
+            color: root.color_accent1
             font.pixelSize: 14
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft

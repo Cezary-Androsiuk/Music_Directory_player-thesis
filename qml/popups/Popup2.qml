@@ -2,23 +2,30 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "qrc:/Music_directory_player/qml/components" // BetterButton
+import "qrc:/Music_directory_player/qml/popups/common" // TextsArea
+
 Popup {
     id: popup2
-    property string textMessage: "no message has been set"
-    property string textDescription: ""
+    property string dltText: "no message has been set"
+    property string dltDesc: ""
 
-    property string textLB: "Ok" // left button text
-    property string textRB: "Cancel" // right button text
 
-    property int fontSizeLB: 17 // left button font size
-    property int fontSizeRB: 17 // right button font size
+    property string dltTextLB: "LB" // left button text
+    // - MB
+    property string dltTextRB: "RB" // right button text
 
-    property bool jea: true // just exit action
+    property int dltFontSizeLB: 14 // left button font size
+    // - MB
+    property int dltTontSizeRB: 14 // right button font size
 
-    signal clickedLB() // clicked left button
-    signal clickedRB() // clicked right button
+    property bool dltJea: true // just exit action
 
-    property bool noDesc: (textDescription === "")
+    signal dltClickedLB() // clicked left button
+    // - MB
+    signal dltClickedRB() // clicked right button
+
+    readonly property bool noDesc: (dltDesc === "")
 
     height: noDesc ? 160 : 240
     width: 310
@@ -26,9 +33,14 @@ Popup {
     x: root._w/2 - width/2
     y: (root._h/2 - height/4) - height/2
 
+    // background: Rectangle {
+    //     color: root.color_background
+    //     radius: 10
+    // }
+
     dim: true
     modal: true
-    closePolicy: jea ?
+    closePolicy: dltJea ?
                      Popup.CloseOnEscape | Popup.CloseOnPressOutside :
                      Popup.NoAutoClose
 
@@ -37,95 +49,25 @@ Popup {
             popup2.focus = true
         }
         Keys.onEscapePressed: {
-            if(jea)
+            if(dltJea)
                 popup2.close()
             else
                 root.close()
         }
-
     }
 
     Item{
+        id: globArea
         anchors{
             fill: parent
             topMargin: noDesc ? 0 : -10
             bottomMargin: noDesc ? 0 : -10
         }
 
-        Item{
+        TextsArea{
             id: areaTexts
-            anchors{
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            height: parent.height * 3/5
-
-            Item{
-                id: areaMessage
-                anchors{
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                }
-                height: noDesc ? parent.height : parent.height * 3/6
-
-                Text{
-                    id: message
-                    anchors.centerIn: parent
-                    text: textMessage
-                    clip: true
-                    font.pixelSize: 14
-                    color: root.color_accent1
-                    width: popup2.width - 50
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                }
-            }
-            Item{
-                id: areaDescription
-                anchors{
-                    top: areaMessage.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                }
-
-                visible: !noDesc
-
-                Rectangle{
-                    anchors.fill: parent
-                    color: "white"
-                    opacity: 0.05
-                }
-
-                Text{
-                    anchors{
-                        top: parent.top
-                        left: parent.left
-                        right: parent.right
-                    }
-                    text: "Description"
-                    color: root.color_accent1
-                    font.pixelSize: 10
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Text{
-                    anchors{
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                        topMargin: 15
-                    }
-
-                    text: textDescription
-                    color: root.color_accent1
-                    wrapMode: Text.Wrap
-                    clip: true
-                    font.pixelSize: 9
-                }
-            }
+            dltText: popup2.dltText
+            dltDesc: popup2.dltDesc
         }
 
         Item{
@@ -146,31 +88,29 @@ Popup {
                 }
                 width: parent.width /2
 
-                Rectangle{
-                    anchors.fill: buttonL
-
-                    color: "transparent"
-                    border.color: root.color_accent1
-                    border.width: 1
-                    opacity: 0.4
-                }
-                TabButton{
-                    id: buttonL
+                Item{
                     anchors{
                         verticalCenter: parent.verticalCenter
                         right: parent.right
                         rightMargin: (parent.width - width) * 1/3
                     }
+                    height: 46
+                    width: 80
 
-                    text: textLB
-                    font.pixelSize: fontSizeLB
-                    onClicked: {
-                        popup2.close();
-                        clickedLB();
+                    BetterButton{
+                        id: buttonL
+                        dltText: dltTextLB
+                        dltFontSize: dltFontSizeLB
+                        dltBorderVisible: true
+                        dltBorderOpacity: 0.1
+                        dltUsePopupColor: true
+                        onUserClicked:{
+                            popup2.close();
+                            dltClickedLB();
+                        }
                     }
-
-                    width: 100
                 }
+
             }
 
             Item{
@@ -182,31 +122,29 @@ Popup {
                 }
                 width: parent.width /2
 
-                Rectangle{
-                    anchors.fill: buttonR
-
-                    color: "transparent"
-                    border.color: root.color_accent1
-                    border.width: 1
-                    opacity: 0.4
-                }
-                TabButton{
-                    id: buttonR
+                Item{
                     anchors{
                         verticalCenter: parent.verticalCenter
                         left: parent.left
                         leftMargin: (parent.width - width) * 1/3
                     }
+                    height: 46
+                    width: 80
 
-                    text: textRB
-                    font.pixelSize: fontSizeRB
-                    onClicked: {
-                        popup2.close();
-                        clickedRB();
+                    BetterButton{
+                        id: buttonR
+                        dltText: dltTextRB
+                        dltFontSize: dltTontSizeRB
+                        dltBorderVisible: true
+                        dltBorderOpacity: 0.1
+                        dltUsePopupColor: true
+                        onUserClicked:{
+                            popup2.close();
+                            dltClickedRB();
+                        }
                     }
-
-                    width: 100
                 }
+
             }
         }
 
