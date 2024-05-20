@@ -114,9 +114,11 @@ Page {
                                 // backend.database.loadEditPlaylistSongModel(+modelData.id)
                             }
                             onUserClickedPlay: {
-                                // console.log("play: " + modelData.title)
+                                console.log("play: " + modelData.id)
+                                Backend.player.playOtherNextSongByID(modelData.id)
                             }
                         }
+
                         Rectangle{
                             anchors.fill: parent
                             color: root.color_accent2
@@ -158,9 +160,11 @@ Page {
                                 // just_used_title = modelData.title;
                                 console.log(modelData.id + " " + modelData.listIndex + " " + modelData.title)
                                 // backend.database.loadEditPlaylistSongModel(+modelData.id)
+                                Backend.player.playNextSong()
                             }
                             onUserClickedPlay: {
-                                // console.log("play: " + modelData.title)
+                                console.log("play: " + modelData.id)
+                                Backend.player.playOtherNextSongByID(modelData.id)
                             }
                         }
                     }

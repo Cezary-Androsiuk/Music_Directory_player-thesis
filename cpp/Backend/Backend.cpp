@@ -41,6 +41,8 @@ void Backend::initializeConnections()
     /// after loading new songs in playlist, start player to initialize with default songs
     QObject::connect(m_playlist, &Playlist::songsLoaded, m_player, &Player::initialize);
 
+    QObject::connect(m_playlist, &Playlist::songsShuffled, m_player, &Player::setNextSongAs0);
+
     /// on ask for Song by player, load song in playlist
     QObject::connect(m_player, &Player::askForSongByPosition,           m_playlist, &Playlist::loadSongByPosition);
     QObject::connect(m_player, &Player::askForSongByID,                 m_playlist, &Playlist::loadSongByID);
