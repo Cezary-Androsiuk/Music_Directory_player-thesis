@@ -21,6 +21,8 @@ public slots:
 
 
     void playOtherNextSongByID(int songID); /// triggered by qml when user select other next song
+    void playNextSong(); /// triggered when current song has ended
+    void setNextSongAs0(); /// triggered when songs are shuffled and sets next song to first pos
 
 public slots: /// bottom player actions
     void play();
@@ -34,12 +36,15 @@ public slots:
 
 signals:
     void currentSongChanged();
+    void songEnded();
 
     void askForSongByPosition(int position); /// emitted when player want a new song
     void askForSongByID(int id); /// emitted when player want a new song
 
 private:
     Song *m_currentSong;
+
+    bool m_nextSongIsFist; /// stores info about if next song should be pos 0 or currentsong.pos+1
 };
 
 #endif // PLAYER_H

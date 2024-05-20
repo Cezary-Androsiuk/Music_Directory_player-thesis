@@ -16,12 +16,29 @@ void Player::initialize()
 {
     DB << "player start initialize";
     // current song should be nullptr
-    // emit this->askForSongByPosition(0);
+    emit this->askForSongByPosition(0);
 }
 
 void Player::playOtherNextSongByID(int songID)
 {
+    DB << "choosed song" << songID;
     emit this->askForSongByID(songID);
+}
+
+void Player::playNextSong()
+{
+    if(m_nextSongIsFist)
+    {
+        emit this->askForSongByPosition(0);
+        m_nextSongIsFist = false;
+    }
+    else
+        emit this->askForSongByPosition(m_currentSong->getListIndex()+1);
+}
+
+void Player::setNextSongAs0()
+{
+    m_nextSongIsFist = true;
 }
 
 void Player::play()
