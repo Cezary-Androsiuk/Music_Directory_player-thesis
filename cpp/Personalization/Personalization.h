@@ -14,7 +14,7 @@
 
 
 
-#define PERSONALIZATIONS_JSON_PATH "./assets/personalizations.json"
+#define PERSONALIZATION_JSON_PATH "./assets/personalization.json"
 #define PRINT_LOAD_AND_SAVE_VALUES 0
 
 #define DEFAULT_NOTE "### Any change to the contents of this file, may lead to unexpected results ###"
@@ -30,7 +30,7 @@
 
 
 #define CHECK_KEY(arg) if(jp.contains(key)) arg;\
-else WR << PERSONALIZATIONS_JSON_PATH << " file not contains value related with '" << key << "' key";
+else WR << PERSONALIZATION_JSON_PATH << " file not contains value related with '" << key << "' key";
 
 class Personalization : public QObject
 {
@@ -60,7 +60,7 @@ public:
 public: // getters / setters
     /**
      * returns 0 if none error occur while loading personalization from json,
-     * if any error occur while loading personalizations from json error code will be returned
+     * if any error occur while loading personalization from json error code will be returned
      */
     int getErrorCodeIfOccurWhileLoading() const;
 

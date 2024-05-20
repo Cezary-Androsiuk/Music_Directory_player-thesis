@@ -46,7 +46,7 @@ ApplicationWindow {
 
         function onPersonalizationLoadError(errorCode){
             p_personalizationLoadError.open()
-            p_personalizationLoadError.textMessage = "Error while loading personalizations, error code: " + errorCode
+            p_personalizationLoadError.dltText = "Error while loading personalizations, error code: " + errorCode
         }
 
         function onBackendInitialized(){

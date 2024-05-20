@@ -13,8 +13,8 @@ Personalization::Personalization(QObject *parent)
     m_showRefreshListButton(DEFAULT_SHOW_REFRESH_LIST_BUTTON)
 {
     LFL("Personalization instance      %1 created");
-    // WR << "REMOVING PERSONALIZATIONS";
-    // QFile::remove(PERSONALIZATIONS_JSON_PATH);
+    // WR << "REMOVING PERSONALIZATION";
+    // QFile::remove(PERSONALIZATION_JSON_PATH);
 }
 
 Personalization::~Personalization()
@@ -55,9 +55,9 @@ void Personalization::setDefaultPersonalizationData()
 
 void Personalization::loadPersonalizationFromJson()
 {
-    auto PJP = PERSONALIZATIONS_JSON_PATH;
+    auto PJP = PERSONALIZATION_JSON_PATH;
     if(!QFile(PJP).exists()){
-        WR << "file " << PERSONALIZATIONS_JSON_PATH << " not found";
+        WR << "file " << PERSONALIZATION_JSON_PATH << " not found";
         m_errorCodeIfOccurWhileLoading = 10;
         return;
     }
@@ -126,7 +126,7 @@ void Personalization::loadPersonalizationFromJson()
 
 void Personalization::savePersonalizationToJson()
 {
-    QString PJP = PERSONALIZATIONS_JSON_PATH;
+    QString PJP = PERSONALIZATION_JSON_PATH;
 
     int last_forward_slash = PJP.lastIndexOf('/');
     if(last_forward_slash == -1)
